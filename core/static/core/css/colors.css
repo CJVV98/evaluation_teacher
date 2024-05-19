@@ -120,3 +120,43 @@
 .border-left-card{
     border-left: #00c6d7 5px solid;
 }
+.menu-bar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20%;
+    background-color: #333;
+    padding: 10px 0;
+    z-index: 1000; 
+    height: 100%;
+  }
+.content-margin{
+    margin-left: 17%;
+}
+.header-static{
+    background-color: #00C6D7;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    padding: 10px 0;
+    z-index: 2000;
+}
+.header-menu-static{
+    background-color: #00C6D7;
+    margin: -5%;
+    padding: 5%;
+}
+
+.items-menu-static{
+    margin: 5%;
+}
+.align-center-v{
+    display: flex;
+    align-items: center;
+}
+
+.bg-color-transparent{
+    background-color: transparent !important;
+}

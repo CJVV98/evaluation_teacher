@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'evaluation_teacher',
     'pages_visualization',
     'model_manage', 
+    
     'user_manage',
 
 ]

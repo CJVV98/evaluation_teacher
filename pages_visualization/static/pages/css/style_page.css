@@ -1,0 +1,13 @@
+
+
+.list-teachers {
+  display: inline-block;
+  white-space: nowrap;
+  padding: 0;
+  margin: 1%
+}
+.div-scroll-teachers {
+  height: 60%;
+  overflow-y: auto;
+  padding-top: 1rem;
+}

@@ -15,13 +15,13 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 </head>
-<body>
+<body id="body_main">
    {% include "core/header.html" %}
     <div class="row h-100">
-      <div class="col-2 bg-color-prim" >
+      <div class="col-2 bg-color-prim menu-bar " >
         {% include "core/menu.html" %}
       </div>
-      <div class="col-10">
+      <div class="col-10 content-margin">
           <div class ="container" id="content-dash">
             {% include "pages/home_page.html" with plot_div_donut=plot_div_donut plot_div_bar=plot_div_bar plot_div_table=plot_div_tabl%}
           </div>

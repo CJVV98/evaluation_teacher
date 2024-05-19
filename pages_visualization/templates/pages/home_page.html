@@ -40,7 +40,6 @@
       <ul id="list-ciclo" class="dropdown-menu">
         <li><a class="dropdown-item" href="#">2330</a></li>
         <li><a class="dropdown-item" href="#">2310</a></li>
-        <li><a class="dropdown-item" href="#">2410</a></li>
       </ul>
   
     </div>
@@ -94,7 +93,8 @@
       </div>
     </div>
   </div>
-  </br>
+
+
   {% block content %}
      <div id="contenido_plots">
        {% include "pages/plots_general.html" with ciclo='2330' %}  
@@ -102,7 +102,9 @@
   {% endblock %}
 </div>
 </div>
-
+</br>
+</br>
+</br>
 <script>
   $(document).ready(function() {
     // Capturar el valor del filtro

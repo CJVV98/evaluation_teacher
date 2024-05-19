@@ -1,4 +1,6 @@
 {% load static %}
+<link href="{% static 'pages/css/style_page.css' %}" rel="stylesheet">
+<br/><br/>
 <div class="row">
   <div class="col-sm-6 mb-3 mb-sm-0">
     <div class="row g-0">
@@ -9,6 +11,7 @@
         <div class="card-body">
           <h5 class="card-title">Asignatura</h5>
           <p class="card-text">{{name|safe}}</p>
+          <p class="card-text lb-transparent" >{{id_course|safe}}</p>
         </div>
       </div>
     </div>
@@ -61,33 +64,75 @@
 </div>
 </br>
 
+
 <div class="row">
-  <div class="col-12"> 
-    <div class="card">
-      <div class="card-body text-center">
-        <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded">Relación de emociones por asignatura</h5>
-          <div class="d-flex justify-content-center">
-           {{ plot_bar_course_emotions|safe }}
-          </div>
+  <div class="col-3">
+    <div class="card h-75">
+      <div class="card-body ">
+        <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 text-center rounded">Docentes</h5>
+        <div class="">
+            <ul id="list_teacher" class="list-group list-teachers div-scroll-teachers ">
+
+              {% for teacher in list_teacher %}
+                <li class="list-group-item">
+                  <input class="form-check-input me-1" type="checkbox" value="{{ teacher.cod_teacher }}" id="firstCheckbox">
+                  <label class="form-check-label fs-6" for="firstCheckbox">{{ teacher.id_teacher }}</label>
+                </li>
+            {% endfor %}
+              
+            
+            </ul>
+        </div>
       </div>
     </div>
-   
   </div>
-  <div class="col-5">    
-  </div>
-</div>
-<div class="row">
-  <div class="col-12"> 
-    <div class="card">
-      <div class="card-body text-center">
-        <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded">Relación de criterios por asignatura</h5>
-          <div class="d-flex justify-content-center">
-           {{ plot_bar_course_criterias|safe }}
-          </div>
-      </div>
-    </div>
-   
-  </div>
-  <div class="col-5">    
+  <div class="col-9" id="content-dash-courses">
+    
   </div>
 </div>
+<script>
+  var list_teacher_checked = [];
+  $(document).ready(function() {
+    loadDiv([])
+    var csrftoken = getCookie('csrftoken');
+    var table_comments=[]
+    var emotion ='';
+      $("#list_teacher").on("click", "li", function(event) {
+        if ($(event.target).is("input[type='checkbox']")) {
+          const checkbox = $(this).find("input[type='checkbox']");
+          if(checkbox.is(":checked") && !list_teacher_checked.includes(checkbox.val())){
+            list_teacher_checked.push(parseInt(checkbox.val()));
+            console.log(list_teacher_checked)
+            loadDiv(list_teacher_checked)
+          }else{
+            list_teacher_checked = list_teacher_checked.filter(item => item !== parseInt(checkbox.val()));
+            console.log(list_teacher_checked)
+            loadDiv(list_teacher_checked)         
+          }
+        }
+      })
+      function  loadDiv(list_teacher_checked){
+        var csrftoken = getCookie('csrftoken');
+        var ciclo = $("#lb_ciclo").text().trim();
+        var data = {
+          'list_teacher_checked':list_teacher_checked,
+          'name': "{{name}}",
+          'id_course': "{{id_course}}",
+          'ciclo': ciclo
+        }
+        console.log(data)
+        $.ajax({
+          url: 'pages/plots_course_filter',
+          type: 'POST',
+          data: data,
+          beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          },
+          success: function(response) {
+            $('#content-dash-courses').html(response);
+          }
+        });
+      }
+    })
+   
+</script>

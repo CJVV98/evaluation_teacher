@@ -1,17 +1,44 @@
 {% load static %}
-<nav class="navbar  justify-content-between navbar-light" style="background-color: #00C6D7;">
+<nav class="navbar  justify-content-between navbar-light header-static" style="background-color: #00C6D7;">
     <a class="navbar-brand" href="#">
         <img src="{% static 'core/img/logo_ev.png' %}" width="30" height="30" class="d-inline-block align-top margin-12" alt="">
         EvaluationPUJ
     </a>
     <form class="form-inline">
       <div class="row  top-0 end-0">
-        <div class="col-6"> 
-           <input class="form-control mr-sm-2 " type="search" placeholder="Buscar" aria-label="Buscar">
+        <div class="col-1 align-center-v"> 
         </div>
-        <div class="col-6"> 
-           <button class="btn my-2 my-sm-0 bg-color-prim text-white" type="submit">Buscar</button>
+        <div class="col-2"> 
+          <button class="bg-color-transparent" id="bt-exit" >
+            <img src="{% static 'core/img/exit.svg' %}"  width="30" height="30" class="" alt="Cerrar sesión">        
+          </button>   
+        </div>
+        <div class="col-2 ms-2">       
         </div>
       </div>
     </form>
 </nav>
+
+<script>
+     
+  $("#bt-exit").click(function(){
+    event.preventDefault();
+    window.location.href="{% url 'core:login' %}"   
+  })
+
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (const element of cookies) {
+            var cookie = element.trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+  }
+
+</script>

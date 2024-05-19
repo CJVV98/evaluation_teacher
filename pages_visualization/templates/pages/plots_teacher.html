@@ -339,8 +339,8 @@
       var filtro = table.slice(inicio, fin);
       $('#table-comments tbody').empty();
       $.each(filtro, function(index, row) {
-        var row = '<tr><td>' + (index+1) + '</td><td>' + row.course + '</td><td>' + row.comment + '</td></tr>';
-        $('#table-comments tbody').append(row); 
+        var row_ = '<tr><td>' + (index+1) + '</td><td>' + row.course + '</td><td>' + row.comment + '</td></tr>';
+        $('#table-comments tbody').append(row_); 
       });  
       $('#table-comments thead').removeClass()
       $('#table-comments').removeClass("item-display-none")

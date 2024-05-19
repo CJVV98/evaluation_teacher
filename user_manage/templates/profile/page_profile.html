@@ -192,7 +192,7 @@
               };
               $.ajax({
                 type: 'POST',
-                url: 'pages/create_or_modify_user',
+                url: 'profile/create_or_modify_user',
                 data: formUser,
                 beforeSend: function(xhr, settings) {
                   xhr.setRequestHeader("X-CSRFToken", csrftoken);
@@ -222,7 +222,7 @@
       var user_edit=elementRow.parentNode.parentNode.parentElement.querySelector('td:nth-child(2)').innerText;
       var data_user= table_users.filter(user=> user.user==user_edit);
       $.ajax({
-        url: 'pages/change_state_user', 
+        url: 'profile/change_state_user', 
         type: 'POST',
         data: {
           'user':data_user[0].user,

@@ -8,6 +8,8 @@ from pages_visualization.models import Calification
 from pages_visualization.models import Evaluation
 from pages_visualization.models import Teacher
 import random
+from bokeh.embed import components
+
 
 
 
@@ -58,7 +60,7 @@ class PlotsUtils():
             barmode='group',  # Agrupar las barras
             xaxis_title="Criterio",
             yaxis_title="Calificación",
-            width=1000,
+            width=1100,
             height=500,
             autosize=True,
             margin=dict(l=5, r=0, t=5, b=0)
@@ -80,25 +82,19 @@ class PlotsUtils():
         data_colors= {'Color' : [color.replace(')',', 1)'),color.replace(')',', 0.7)'),
                                 color.replace(')',', 0.5)'),color.replace(')',', 0.3)'),
                                 color.replace(')',', 0.1)') ]}  
-        print(data_colors)
-        df = pd.DataFrame(data_colors)
-        fig = go.Figure(data=[go.Table(
-        header=dict(
-            values=['Asignaturas con más comentarios','Cantidad'],
-            line_color='white', fill_color='rgb(11, 32, 53)',
-            align='left',font=dict(color='white', size=12)
-        ),
-        cells=dict(
-            values=[name_courses,count_emotion],
-            line_color='rgb(239, 243, 255)',
-            fill_color=[df.Color],
-            align='left', font=dict(color='black', size=11),
-            height=30
-            ))
-        ])
+
+       
+        df_ = pd.DataFrame({"name": name_courses, "count": count_emotion,'color':data_colors['Color']})
+        fig = px.funnel(df_, x='count', y='name')
+        fig.update_traces(marker=dict(color=data_colors['Color']))
+
         fig.update_layout(
                 width=450,
                 height=400,
+                xaxis_title="Cantidad de comentarios",
+                plot_bgcolor=plots.BG_COLOR_WHITE,
+                paper_bgcolor=plots.BG_COLOR_WHITE,
+                yaxis_title="Asignatura",
                 autosize=True,
                 margin=dict(l=10, r=0, t=10, b=0)
         )
@@ -124,14 +120,13 @@ class PlotsUtils():
         df_emotions['color'] = df_emotions['value_class'].map(assign_color)
         df_emotions['text_value'] = df_emotions['value_total'].apply(lambda x: f"{x:.2f}%")
         number_class = df_emotions.groupby('name_class').ngroups
-        print(number_class)
         space=plots.value_spacing(number_class)
         fig = px.bar(df_emotions, x="name_class", y="value_total", color="value_class",text="text_value", hover_name='count_emotions',
                 pattern_shape="value_class",width=10,  color_discrete_map=color_mapping)
         fig.update_traces(textfont_color="white",hovertemplate='%{hovertext}')
         fig.update_layout(
-                width=540,
-                height=500,
+                width=500,
+                height=470,
                 autosize=True,
                 margin=dict(l=15, r=5, t=60, b=5),
                 xaxis_title="Asignatura",
@@ -202,8 +197,9 @@ class PlotsUtils():
         return plot_div
 
 
-    def generate_bar_groups_courses_emotions(id,name, ciclo):
+    def generate_bar_groups_courses_emotions(id,name, ciclo,list_id_teacher_):
         list_teachers=list(Evaluation.objects.aggregate(Evaluation.get_teachers_by_course(id,name,int(ciclo))))
+        list_id_teacher = list(map(int, list_id_teacher_))
         df_teachers = pd.DataFrame(list_teachers)
         df_teachers['emotion'] = df_teachers['emotion'].replace({ '[0]':"Miedo",'[1]':"Enojo",'[2]':"Tristeza",'[3]':"Sorpresa",'[4]':"Alegria",'[5]':"Confianza",'[6]':"Otras"})
 
@@ -213,17 +209,19 @@ class PlotsUtils():
         
         number_class = df_teachers.groupby('id_teacher').ngroups
         space=plots.value_spacing(number_class)
-        df_teachers['avg_emotion_text'] = df_teachers['avg_emotion'].apply(lambda x: f"{x:.2f}%")
+        df_teachers['avg_emotion_text'] = df_teachers['avg_emotion'].apply(lambda x: f"{x:.2f}%") 
+        if(list_id_teacher != []):
+            df_teachers = df_teachers[df_teachers['cod_teacher'].isin(list_id_teacher)]
         fig = px.bar(df_teachers, x="avg_emotion", y="id_teacher", color='emotion', orientation='h',
                     hover_name='count', 
                     color_discrete_map=color_mapping, text='avg_emotion_text')
         fig.update_traces(textfont_color="white",hovertemplate='%{hovertext}')
         fig.update_layout(
-                width=1100,
+                width=850,
                 height=400,
                 autosize=True,
                 bargap=space,
-                xaxis_title="Cantidad de comentarios",
+                xaxis_title="Porcentaje de comentarios",
                 yaxis_title="Docente",
                 legend_title="Emociones",
                 margin=dict(l=10, r=10, t=25, b=10),
@@ -302,38 +300,42 @@ class PlotsUtils():
         return plot_div,median_by_cycle
 
 
-    def generate_bar_groups_courses_criterias(id, ciclo):
-        list_teachers=list(Evaluation.objects.aggregate(Evaluation.get_criteria_group_course_and_cycle(id,int(ciclo))))
+    def generate_bar_groups_courses_criterias(id, ciclo,list_id_teacher_):
+        list_teachers=list(Evaluation.objects.aggregate(Evaluation.get_criteria_group_course_and_cycle(id,int(ciclo))))  
         df_teachers = pd.DataFrame(list_teachers)
+        list_id_teacher = list(map(int, list_id_teacher_))
         color_mapping = { 'Estrategias Pedagógicas':'#19d3f3','Evaluación':'#00cc96',
                         'Relación con los Estudiantes':'#ffa15a','Manejo de Contenidos':'#636efa'
                         }
-
+        df_info_teacher=df_teachers.groupby(['id_teacher','cod_teacher']).count().reset_index()
         number_class = df_teachers.groupby('id_teacher').ngroups
         space=plots.value_spacing(number_class)
         df_teachers['prom_cal_text'] = df_teachers['prom_cal'].apply(lambda x: f"{x:.2f}")
+   
+        if(list_id_teacher != []):
+            df_teachers = df_teachers[df_teachers['cod_teacher'].isin(list_id_teacher)]
         fig = px.bar(df_teachers, x="prom_cal", y="id_teacher", color='criteria', orientation='h',
                 hover_data=["criteria", "prom_cal"],  color_discrete_map=color_mapping, text="prom_cal_text",
                 hover_name="prom_cal_text")
     
         fig.update_traces(textfont_color="white",hovertemplate='%{hovertext}')
         fig.update_layout(
-                width=1100,
+                width=850,
                 height=400,
                 autosize=True,
                 bargap=space,
-                xaxis_title="Promedio",
+                xaxis_title="Calificación promedio por criterio",
                 yaxis_title="Docente",
                 legend_title="Criterios",
                 margin=dict(l=10, r=10, t=25, b=10),
                 paper_bgcolor=plots.BG_COLOR_WHITE,
                 plot_bgcolor='rgba(3, 49, 97, 0.19)'
         )
-        
+       
         mean_by_criteria_course = df_teachers['prom_cal'].mean()
         mean_by_criteria_course=mean_by_criteria_course.round(2)
         plot_div = plot(fig, output_type='div', include_plotlyjs=False)
-        return plot_div,mean_by_criteria_course,number_class
+        return plot_div,mean_by_criteria_course,number_class,df_info_teacher
 
 
     def value_spacing(self,number_class):
@@ -353,11 +355,13 @@ class PlotsUtils():
         total=int(list_teachers[0]['sum_students'])
         total_answered=int(list_teachers[0]['sum_students_resp'])
         total_no_answered=total-total_answered
+        colors=['#033161','rgb(164, 205, 247)']
         fig = go.Figure(data=[go.Pie(labels=['Respondidas','No respondidas'],
                                     values=[total_answered,total_no_answered], hole=.3)])
         fig.update_traces(hoverinfo='label+percent', 
                         textinfo='value',
                         textfont_size=12,
+                        marker=dict(colors=colors),
                         )
         fig.update_layout(
             width=110,

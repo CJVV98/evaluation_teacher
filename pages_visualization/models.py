@@ -69,7 +69,7 @@ class Evaluation(Document):
                 },{
                     '$group': {
                         '_id': {
-                            'name_class': '$name_clase','emotion': '$emotion', 'id_course': '$id_course','num_clase': '$num_clase'
+                            'name_class': '$name_clase','emotion': '$emotion', 'id_course': '$id_course'
                         }, 
                         'count': {
                             '$sum': 1
@@ -360,13 +360,15 @@ class Evaluation(Document):
                 '$addFields': {
                     'emotion': '$comments_student.emotion', 
                     'id_course': '$id_course', 
-                    'id_teacher': '$teacher_data.name'
+                    'id_teacher': '$teacher_data.name',
+                    'cod_teacher': '$teacher_data.id_teacher'
                 }
             }, {
                 '$group': {
                     '_id': {
                         'emotion': '$emotion', 
-                        'id_teacher': '$id_teacher'
+                        'id_teacher': '$id_teacher',
+                        'cod_teacher':'$cod_teacher'
                     }, 
                     'count_emotion': {
                         '$sum': 1
@@ -375,7 +377,8 @@ class Evaluation(Document):
             }, {
                 '$group': {
                     '_id': {
-                        'id_teacher': '$_id.id_teacher'
+                        'id_teacher': '$_id.id_teacher',
+                        'cod_teacher': '$_id.cod_teacher'
                     }, 
                     'emotions': {
                         '$push': {
@@ -391,6 +394,7 @@ class Evaluation(Document):
                 '$project': {
                     '_id': 0, 
                     'id_teacher': '$_id.id_teacher', 
+                    'cod_teacher': '$_id.cod_teacher',
                     'values': {
                         '$map': {
                             'input': '$emotions', 
@@ -418,6 +422,7 @@ class Evaluation(Document):
                     '_id': 0, 
                     'name_class': name, 
                     'id_teacher': '$id_teacher', 
+                    'cod_teacher': '$cod_teacher', 
                     'emotion': '$values.emotion', 
                     'avg_emotion': '$values.media', 
                     'count': '$values.count'
@@ -622,6 +627,7 @@ class Evaluation(Document):
                     'criteria': '$cal_student.criterio', 
                     'prom_cal_criteria': '$cal_student.prom_criterio', 
                     'id_course': '$id_course', 
+                    'cod_teacher': '$teacher_data.id_teacher',
                     'id_teacher': '$teacher_data.name'
                 }
             }, {
@@ -633,7 +639,8 @@ class Evaluation(Document):
                     '_id': {
                         'criteria': '$criteria', 
                         'id_course': '$id_course', 
-                        'id_teacher': '$id_teacher'
+                        'id_teacher': '$id_teacher',
+                         'cod_teacher':'$cod_teacher',
                     }, 
                     'prom_cal': {
                         '$avg': '$prom_cal_criteria'
@@ -647,6 +654,7 @@ class Evaluation(Document):
                 '$project': {
                     '_id': 0, 
                     'id_teacher': '$_id.id_teacher', 
+                    'cod_teacher': '$_id.cod_teacher', 
                     'criteria': '$_id.criteria', 
                     'prom_cal': '$prom_cal'
                 }

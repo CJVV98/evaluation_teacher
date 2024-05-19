@@ -1,6 +1,6 @@
 from django.shortcuts import render # type: ignore
 from django.views.generic.edit import CreateView # type: ignore
-from django.urls import reverse # type: ignore
+from django.urls import reverse,reverse_lazy # type: ignore
 from .forms import UserForm
 from django.contrib.auth import authenticate  # type: ignore
 from utils.plots_utils import PlotsUtils

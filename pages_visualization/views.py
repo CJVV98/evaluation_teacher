@@ -2,7 +2,7 @@ from django.shortcuts import render  # type: ignore
 from utils.plots_utils import PlotsUtils
 from utils.data_utils import DataUtils
 from django.http import JsonResponse  # type: ignore
-
+import json
 
 
 
@@ -45,15 +45,27 @@ def plots_teacher(request):
 def plot_courses (request):
     id_course = request.POST.get('id_course', None)
     name = request.POST.get('name', None)
+    list_teacher = request.POST.get('list_teacher', []) 
     ciclo = request.POST.get('ciclo', None) 
-    plot_bar_course_emotions, sum_emotion_by_cycle=PlotsUtils.generate_bar_groups_courses_emotions(int(id_course),name, ciclo)
-    plot_bar_course_criterias,mean_by_criteria_course, count_teacher=PlotsUtils.generate_bar_groups_courses_criterias(int(id_course), ciclo)
-
-    return render(request, 'pages/plots_courses.html',context={'plot_bar_course_emotions': plot_bar_course_emotions,
+    _, sum_emotion_by_cycle=PlotsUtils.generate_bar_groups_courses_emotions(int(id_course),name, ciclo,list_teacher)
+    _,mean_by_criteria_course, count_teacher,df_info_teacher=PlotsUtils.generate_bar_groups_courses_criterias(int(id_course), ciclo,list_teacher)
+    list_teachers=df_info_teacher.to_dict(orient='records')
+    return render(request, 'pages/plots_courses.html',context={
                                                                'name':name,
+                                                               'id_course':id_course,
+                                                               'list_teacher':list_teachers,
                                                                'count_teacher':count_teacher,
                                                                'sum_emotion_by_cycle':sum_emotion_by_cycle,
-                                                               'mean_by_criteria_course':mean_by_criteria_course,
+                                                               'mean_by_criteria_course':mean_by_criteria_course})
+
+def plot_courses_filter (request):
+    id_course = request.POST.get('id_course', None)
+    name = request.POST.get('name', None)
+    list_teacher = request.POST.getlist('list_teacher_checked[]', []) 
+    ciclo = request.POST.get('ciclo', None) 
+    plot_bar_course_emotions,_=PlotsUtils.generate_bar_groups_courses_emotions(int(id_course),name, ciclo,list_teacher)
+    plot_bar_course_criterias,_,_,_=PlotsUtils.generate_bar_groups_courses_criterias(int(id_course), ciclo,list_teacher)
+    return render(request, 'pages/plots_course_filter.html',context={'plot_bar_course_emotions': plot_bar_course_emotions,
                                                                'plot_bar_course_criterias': plot_bar_course_criterias})
 
 
@@ -114,38 +126,5 @@ def plots_emotions_criterias_teacher_bar(request):
    
 def get_counts_general(request):
     cycle = request.POST.get('cycle', None)
-    print(int(cycle))
     courses,teachers,evaluations=DataUtils.counts_general(int(cycle))
-    print(courses,teachers,evaluations)
     return JsonResponse({'courses':courses,'teachers':teachers,'evaluations':evaluations})
-
-
-def create_or_modify_user(request):
-    user_form = request.POST.get('user')
-    is_edit = bool(request.POST.get('create'))
-    email_form = request.POST.get('email')
-    user=DataUtils.get_data_user(email_form, user_form)
-    if(user and not(is_edit)):
-        data = {'error': 'El usuario o correo ya se encuentra en uso'}
-        return JsonResponse(data, status=400)
-    else:
-        names_form= request.POST.get('names')
-        last_names_form= request.POST.get('lastNames')
-        password_form= request.POST.get('password')
-        user={'names':names_form, 
-              'password':password_form,
-              'user':user_form,
-              'last_names':last_names_form,
-              'email':email_form,
-              'profile':"Docente",
-              'state':1}
-        DataUtils.create_modify_user(user)
-        data = {'error': 'Registro exitoso'}
-        return JsonResponse(data, status=200)
-    
-def change_state_user(request):
-    user_form = request.POST.get('user')
-    state = int(request.POST.get('state'))
-    state= 0 if state==1 else 1
-    DataUtils.modify_state(user_form, state)
-    return JsonResponse( {'error': 'Cambio exitoso'}, status=200)
