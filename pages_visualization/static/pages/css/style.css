@@ -1,0 +1,14 @@
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+
+.bg-dark {
+  background-color: #033161 !important;
+}
+.text-align-p{
+  text-align: left;
+}
+.card-title {
+  background: #033161;
+  color: white;
+  margin-bottom: .75rem;
+}

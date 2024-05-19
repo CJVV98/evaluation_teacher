@@ -1,0 +1,73 @@
+{% load static %}
+<div class="row">
+  <div class="col-sm-6 mb-3 mb-sm-0">
+    <div class="row g-0 border">
+      <div class="col-md-3">
+        <img src="{% static 'core/img/teacher.svg' %}" width="100" height="80" class="d-inline-block align-top" alt="">
+      </div>
+      <div class="col-md-9">
+        <div class="card-body">
+          <h5 class="card-title">Docente</h5>
+          <p class="card-text">{{name_teacher|safe}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="row g-0 border">
+      <div class="col-md-4">
+        <img src="{% static 'core/img/comments.svg' %}" width="80" height="80" class="d-inline-block align-top" alt="">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h6 class="card-title">Total comentarios</h6>
+          <p class="card-text">
+            {% for  data  in sum_by_cycle %}         
+               {{ data.0 }} <i class="bi bi-chat-right-dots"></i>    {{ data.1 }}  </br>
+            {% endfor %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="row g-0 border">
+      <div class="col-md-4">
+        <img src="{% static 'core/img/list.svg' %}" width="80" height="80" class="d-inline-block align-top" alt="">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h6 class="card-title">Promedio de encuestas</h6>
+          <p class="card-text">
+            {% for  data  in median_by_cycle %}         
+               {{ data.0 }} <i class="bi bi-bar-chart-line-fill"></i>   {{ data.1 }}  </br>
+            {% endfor %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</br>
+<div class="row">
+    <div class="col-6"> 
+      <div class="card">
+        <div class="card-body text-center">
+          <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded">Comparativo de criterios por semestre</h5>
+    
+            {{ plot_criterias|safe }}
+        </div>
+      </div>
+     
+    </div>
+    <div class="col-6"> 
+      <div class="card">
+        <div class="card-body text-center">
+          <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded">Comparativo de emociones por semestre</h5>
+    
+            {{ plot_emotions|safe }}
+        </div>
+      </div>
+     
+    </div>
+</div>

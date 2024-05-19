@@ -1,0 +1,93 @@
+{% load static %}
+<div class="row">
+  <div class="col-sm-6 mb-3 mb-sm-0">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="{% static 'core/img/board.svg' %}" width="100" height="80" class="d-inline-block align-top" alt="">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">Asignatura</h5>
+          <p class="card-text">{{name|safe}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-2 border-left-card">
+    <div class="row g-0 ">
+      <div class="col-md-4">
+        <img src="{% static 'core/img/teacher_two.svg' %}" width="50" height="80" class="d-inline-block align-top" alt="">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h6 class="card-title">Total de docentes</h6>
+          <p class="card-text">      
+             <strong>{{ count_teacher|safe }} </strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-2 border-left-card">
+    <div class="row g-0 ">
+      <div class="col-md-4">
+        <img src="{% static 'core/img/comments.svg' %}" width="50" height="80" class="d-inline-block align-top" alt="">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h6 class="card-title">Total de comentarios</h6>
+          <p class="card-text">      
+            <strong>{{ sum_emotion_by_cycle|safe }} </strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-2 border-left-card">
+    <div class="row g-0 ">
+      <div class="col-md-4">
+        <img src="{% static 'core/img/list.svg' %}" width="50" height="80" class="d-inline-block align-top" alt="">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h6 class="card-title">Promedio de encuestas</h6>
+          <p class="card-text">      
+            <strong>{{ mean_by_criteria_course |safe}}  </strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</br>
+
+<div class="row">
+  <div class="col-12"> 
+    <div class="card">
+      <div class="card-body text-center">
+        <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded">Relación de emociones por asignatura</h5>
+          <div class="d-flex justify-content-center">
+           {{ plot_bar_course_emotions|safe }}
+          </div>
+      </div>
+    </div>
+   
+  </div>
+  <div class="col-5">    
+  </div>
+</div>
+<div class="row">
+  <div class="col-12"> 
+    <div class="card">
+      <div class="card-body text-center">
+        <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded">Relación de criterios por asignatura</h5>
+          <div class="d-flex justify-content-center">
+           {{ plot_bar_course_criterias|safe }}
+          </div>
+      </div>
+    </div>
+   
+  </div>
+  <div class="col-5">    
+  </div>
+</div>

@@ -1,0 +1,99 @@
+<nav class ="navbar navbar-light align-text-bottom bg-color-prim margin-12" id="menu-users">
+    <ul class ="nav navbar-nav text-white">
+        <li class ="nav-item">
+            <a class ="nav-link text-white" href="#" id="li-home">        
+                <i class="bi bi-house"></i>
+                Inicio
+            </a>
+        </li>
+        <li class ="nav-item">
+            <a class ="nav-link text-white" href="#" id="li-profile"> 
+                <i class="bi bi-person"></i>
+                Perfil 
+            </a>
+        </li>
+        <li class ="nav-item">
+            <a class ="nav-link text-white" href="#" id="li-alerts">
+                <i class="bi bi-file-bar-graph-fill"></i>
+                Alertas 
+            </a>
+        </li>
+        <li class ="nav-item">
+            <a class ="nav-link text-white" href="#" id="li-evaluations">
+                <i class="bi bi-file-bar-graph-fill"></i>
+                Cargar evaluaciones 
+            </a>
+        </li>
+        <li class ="nav-item">
+            <a class ="nav-link text-white" href="#" id="li-train">
+                <i class="bi bi-file-bar-graph-fill"></i>
+                Entrenamiento 
+            </a>
+        </li>
+       
+    </ul>
+</nav>
+
+<script>
+     
+  document.getElementById('menu-users').addEventListener('click', function(event) {
+    event.preventDefault();
+    var csrftoken = getCookie('csrftoken');
+    var element = event.target.id;
+    var url=""
+    var data={}
+    if(element==='li-profile'){
+        url="profile/page_profile"
+        data={
+        }
+    }
+    if(element==='li-alerts'){
+        url="pages/get_alerts"
+        data={
+            'ciclo':2330
+        }
+    }
+    if(element==='li-home'){
+        url="pages/home"
+        data={
+            'ciclo':2330
+        }
+    }
+    if(element==='li-train'){
+        url="model/page_training"
+        data={
+        }
+    }
+    $.ajax({
+        url: url, 
+        type: 'POST',
+        data:data,
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        },
+        success: function(response) {
+            $('#content-dash').html(response);
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+  });
+
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+  }
+
+</script>

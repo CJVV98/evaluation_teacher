@@ -1,0 +1,280 @@
+
+{% load static %}
+ <div class="container">
+    {% csrf_token %}
+  </br>
+ 
+  
+<!-- Modal Docentes-->
+<div class="modal fade" id="modal-teacher" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-teacher-label" 
+ aria-modal="true" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-color-prim text-light">
+        <h1 class="modal-title fs-5" id="modal-teacher-label">Docentes</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"  onclick="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="filter" class="form-control mb-3" placeholder="Filtrar...">
+        <ul class="list-group" id="list-teacher">
+          <!-- Elementos de la lista aquí -->
+        </ul>
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center" id="paginator-teacher">
+            <!-- Botones de paginación aquí -->
+          </ul>
+        </nav>
+      </div>
+      <div class="modal-footer">
+        <button id="cancel_modal" type="submit" class="btn btn-secondary bg-color-prim text-light"  onclick="closeModal()">Continuar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="row">
+    <div class="col-12 d-flex justify-content-end"> 
+      <button type="button" class="btn bg-color-prim text-light position-relative dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <strong>Ciclo: </strong> <label id="lb_ciclo">2330 </label> <svg width="1em" height="1em" viewBox="0 0 16 16" class="position-absolute top-100 start-50 translate-middle mt-1 bi bi-caret-down-fill" fill="#212529" xmlns="http://www.w3.org/2000/svg"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
+      </button> 
+      <ul id="list-ciclo" class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">2330</a></li>
+        <li><a class="dropdown-item" href="#">2310</a></li>
+        <li><a class="dropdown-item" href="#">2410</a></li>
+      </ul>
+  
+    </div>
+  </div>
+</br>
+
+<div>
+  <div class="row">
+    <div class="col-12"> 
+      <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-filter" aria-expanded="true" aria-controls="collapse-filter">
+              Filtros
+            </button>
+          </h2>
+          <div id="collapse-filter" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+              <div class="card">
+                <div class="card-body">
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      <div class="input-group mb-3">
+                        <label class="input-group-text bg-color-prim text-light" for="inputGroupSelect01"> Filtrar por</label>
+                        <select id="select-filter" class="select_filter" id="inputGroupSelect01">
+                          <option selected>Filtrar...</option>
+                          <option value="1">Docente</option>
+                          <option value="2">Asignatura</option>
+                        </select>
+                      </div>
+                    </li>
+                    <li id="li-options-filter" class="list-group-item display-none">
+                      <div class="input-group mb-3">
+                        <label class="input-group-text bg-dark text-light" for="select-options"> Filtrar por</label>
+                        <input class="form-control bg-color-in-search" list="select-options" id="in-option-val" placeholder="Seleccionar opción">
+                        <datalist id="select-options" class="select_filter" >
+                          <option selected>Filtrar...</option>
+                        </datalist>
+                      </div>
+                    </li>
+                    <li id="li-options-button" class="list-group-item display-none">
+                       <button class="btn btn-primary bg-color-prim text-light" id="bt-search">Buscar</button>
+                    </li>
+                  </ul>
+                </div>      
+              </div>  
+                     
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </br>
+  {% block content %}
+     <div id="contenido_plots">
+       {% include "pages/plots_general.html" with ciclo='2330' %}  
+     </div>     
+  {% endblock %}
+</div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    // Capturar el valor del filtro
+    $('#filter').on('keyup', function() {
+      var valor = $(this).val().toLowerCase();
+      $('#list-teacher li').filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(valor) > -1);
+      });
+    });
+    $(document).on('change', '#list-teacher input[type="radio"]', function() {
+        var value=$(this).val().split("-")
+        $('#in-option-val').val( value[0] + '-' +value[1]);
+        $('#in-option-val').prop('readonly', true);
+        $('#li-options-filter').css('display', 'block');
+        $('#li-options-button').css('display', 'block');   
+        $('#li-options-button').css('text-align', 'end');   
+    });
+
+    $("#list-ciclo li").click(function() {
+      var ciclo = $(this).text().trim();
+      var csrftoken = getCookie('csrftoken');
+      $.ajax({
+        url: 'pages/plots_general', // Ruta a tu función en Django
+        type: 'POST',
+        data: {
+            'ciclo': ciclo // Enviar el valor seleccionado a la vista de Django
+        },
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        },
+        success: function(response) {
+            console.log(response)
+            $("#lb_ciclo").text(ciclo);
+            $('#contenido_plots').html(response);
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+    });
+  });
+  document.getElementById('bt-search').addEventListener('click', function(event) {
+    $('#in-option-val').prop('readonly', true);
+    var select_filter = $('#select-filter').val();
+    var csrftoken = getCookie('csrftoken');
+    var select_option = $('#in-option-val').val();
+    var option=select_option.split("-")[0]
+    var ciclo = $("#lb_ciclo").text().trim();
+    var name_option=select_option.split("-")[1];
+    var url=""
+    var data={}
+    if(select_filter=='1'){
+        url= 'pages/plots_teacher'
+        data= {
+          'id_teacher': option,
+          'name':name_option,
+          'ciclo':ciclo
+        }
+    }else if(select_filter=='2'){
+      url= 'pages/plots_courses'
+      data= {
+        'id_course': option,
+        'name':name_option,
+        'ciclo':ciclo
+      }
+    }
+    $.ajax({
+         url: url, 
+         type: 'POST',
+         data: data,
+         beforeSend: function(xhr, settings) {
+           xhr.setRequestHeader("X-CSRFToken", csrftoken);
+         },
+         success: function(response) {
+             $('#collapse-filter').removeClass('show');
+             $('#contenido_plots').html(response);
+         },
+         error: function(xhr, status, error) {
+             console.error(error);
+         }
+     });
+
+  });
+  document.getElementById("select-filter").addEventListener("change", function() {
+    var option = this.value;
+    var csrftoken = getCookie('csrftoken');
+    var ciclo = $("#lb_ciclo").text().trim();
+    $.ajax({
+        url: 'pages/list_options', 
+        type: 'POST',
+        data: {
+            'option': option,
+            'ciclo':ciclo
+        },
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        },
+        success: function(response) {
+          if(option=='1'){
+            var elementsSize = 11;
+            var paginas = Math.ceil(response.list_options.length / elementsSize);
+            var paginacionHTML = '';
+            for (var i = 1; i <= paginas; i++) {
+              paginacionHTML += '<li class="page-item"><a class="page-link bg-color-prim text-light" href="#" data-pagina="' + i + '">' + i + '</a></li>';
+            }
+            $('#paginator-teacher').html(paginacionHTML);
+            $('#paginator-teacher a').click(function() {
+              var pagina = $(this).data('pagina');
+              showList(pagina,response.list_options,elementsSize);
+            });
+           
+            showList(1,response.list_options,elementsSize);
+            $('#li-options-filter').css('display', 'none');
+            $('#modal-teacher').css('display', 'block');
+            $('#modal-teacher').addClass('show');
+            
+          }else{
+              console.log(response.list_option)
+              $('#select-options').empty();
+              $.each(response.list_options, function(index, opcion) {
+                  $('#select-options').append('<option value="' + opcion.id +'-'+  opcion.description+'">' + opcion.description + '</option>');
+              });
+              $('#li-options-filter').css('display', 'block');
+              $('#li-options-button').css('display', 'block');   
+              $('#li-options-button').css('text-align', 'end');   
+          }
+          $('#in-option-val').val('')
+          $('#in-option-val').prop('readonly', false);
+      },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+  });
+
+  function showList(pagina,listTeachers,elementsSize) {
+    var inicio = (pagina - 1) * elementsSize;
+    var fin = inicio + elementsSize;
+    var listaHTML = '';
+    for (var i = inicio; i < Math.min(fin, listTeachers.length); i++) {
+      var name=listTeachers[i].description.replace(/\,/g, ' ').toUpperCase();
+      listaHTML += '<li class="list-group-item">';
+      listaHTML += '<input class="form-check-input me-1" type="radio" name="list-group-radio" value="'+listTeachers[i].id+'-'+name+'" id="radio-list-'+listTeachers[i].id+'" >';
+      listaHTML +=  '<label class="form-check-label" for="radio-list-'+listTeachers[i].id+'">'+name+ ' </label>';
+      listaHTML += '</li>';
+    }
+    $('#list-teacher').html(listaHTML);
+  }
+  
+   
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Verificar si la cookie contiene el nombre del token CSRF
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+  }
+  
+  function closeModal(){
+      $('#modal-teacher').css('display', 'none');
+      $('#modal-teacher').removeClass('show');
+
+  }
+  
+</script>
+        

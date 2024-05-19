@@ -1,0 +1,122 @@
+
+.bg-color-prim{
+    background-color: #033161 !important;
+ }
+ .bg-color-sec{
+    background: #0331613d !important;
+ }
+ .bg-color-blue-aqua{
+    background-color: #00c6d7 !important;
+ }
+ .bg-color-in-search{
+    background-color: #e9e9ed !important;
+ }
+.select_filter {
+    height: auto;
+    width: 90%;
+}
+.list-group-item.display-none{
+    display: none;
+}
+
+.accordion-button:not(.collapsed) {
+    color: #033161 !important;
+    background: #0331613d !important;
+}
+
+.accordion-button:focus {
+    border-color: #0331613d !important;
+}
+.select_filter_emotion {
+    width: 46%;
+}
+
+.list-group-item.display{
+    display:contents;
+}
+.margin-12{
+    margin-left: 12%
+}
+.padding-100{
+    padding: 3%;
+    height: 100%
+}
+.text-justify{
+    text-align: justify;
+}
+.item-display-none{
+    display: none;
+}
+.lb-transparent{
+    color: transparent;
+}
+.bg-color-Alegria{
+    background-color: #f39c12 !important;
+ }
+.bg-color-Enojo{
+   background-color: #cb4335 !important;
+}
+.bg-color-Confianza{
+   background-color: #3498db !important;
+}
+.bg-color-Tristeza{
+    background-color: #2ba1cf !important;
+}
+.bg-color-Miedo{
+    background-color: #90a4ae !important;
+}
+.bg-color-Sorpresa{
+    background-color: #69a4cd !important;
+}
+.color-prim{
+    color: #033161 !important;
+}
+.tooltip-data{
+   z-index: 1;
+   position: absolute;
+   margin-left: 5%;
+   margin-right: 5%;
+ }
+.border-cards{
+    background: #092b4e;
+    color: white;
+    padding: 3px 10px;
+    border: #00c6d7 4px outset;
+    border-image-outset: 0;
+    border-image-repeat: stretch;
+    border-image-slice: 100%;
+    border-image-source: none;
+    border-image-width: 1;
+    border-radius: 20px;
+}
+.border-cards-middle{
+    background: white;
+    color: #092b4e;
+    padding: 3px 10px;
+    border: #00c6d7 4px outset;
+    border-image-outset: 0;
+    border-image-repeat: stretch;
+    border-image-slice: 100%;
+    border-image-source: none;
+    border-image-width: 1;
+    border-radius: 20px;
+}
+.form-check-class-teacher:checked {
+    background-color: #00c6d7;
+    border-color: #0d6efd;
+}
+.icon-carousel-teacher {
+    margin: 0;
+    padding: 0;
+    width: 1em !important;
+}
+.button-carousel-teacher{
+    width: 10% !important;
+}
+.center{
+    align-content: center;
+    text-align: center;
+}
+.border-left-card{
+    border-left: #00c6d7 5px solid;
+}

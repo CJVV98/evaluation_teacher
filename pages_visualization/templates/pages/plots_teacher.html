@@ -1,0 +1,377 @@
+{% load static %}
+<div class="row">
+    <div class="col-12"> 
+      <div class="card mb-3" style="max-width: 100%;">
+        <div class="row g-0">
+          <div class="col-md-2">
+            <img src="{% static 'core/img/person.svg' %}" width="200" height="200" class="d-inline-block align-top" alt="">
+          </div>
+          <div class="col-md-10">
+            <div class="card-body">
+              <h5 id="div-name-teacher" class="card-title"><strong>{{ name_teacher|safe }} </strong> </h5>
+              <div id="div-teacher" class="lb-transparent">{{ id_teacher|safe }}</div>
+              <table class="table item" id="table-course">
+                <thead class="bg-color-prim text-light">
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col">#</th>
+                    <th scope="col">Id del curso</th>
+                    <th scope="col">Número de asignatura</th>
+                    <th scope="col">Nombre de asignatura</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for course in list_courses %}                   
+                      <tr>
+                        <td scope="row"><input class="form-check-class-teacher" type="checkbox" value="" id="flexCheckChecked" checked></th>
+                        <td scope="row">{{ forloop.counter }}</th>
+                        <td>{{course.id}}</td>
+                        <td>{{course.num_course}}</td>
+                        <td>{{course.description}}</td>
+                        <td><i class="bi bi-arrow-right-circle-fill" id="bt-search-class"></i></td>
+                      </tr>
+                     {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-2 border-cards-middle"> 
+        <div class="d-flex flex-column-reverse">
+          <div class="p-2">
+            <div class="card border-info mb-3" style="max-width: 18rem;">
+              <div class="card-header center"> Total comentarios</div>
+              <div class="card-body center">
+                <i class="bi bi-chat-right-text-fill"></i>
+                <strong>{{ total_comments|safe }} </strong>
+              </div>
+            </div>
+            
+          </div>
+          <div class="p-2">
+            <div class="card border-info mb-3" style="max-width: 18rem;">
+              <div class="card-header center"> Encuestas</div>
+              <div class="card-body">
+                {{ plot_donut_data|safe }}
+              </div>
+            </div>
+            
+          </div>
+
+          <div class="p-2">
+            <div class="card border-info mb-3" style="max-width: 18rem;">
+              <div class="card-header center"> Posibles encuestados</div>
+              <div class="card-body center">
+                <i class="bi bi-person-fill-check"></i>
+                <strong>{{ total_student|safe }}</strong>
+              </div>
+            </div>
+          </div> 
+
+         
+        
+        </div>
+  </div>
+  <div class="col-6"> 
+    <div class="card">
+      <div class="card-body text-center">
+        <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded">Relación de emociones y criterios cuantitativos
+          <a class="btn bg-color-prim text-white" data-bs-toggle="collapse" href="#helpEmotions" role="button" aria-expanded="false" aria-controls="helpEmotions">
+            <i class="bi bi-info-circle"></i>
+          </a>  
+        </h5>
+        <div class="collapse multi-collapse tooltip-data" id="helpEmotions">
+          <div class="card card-body">
+            <p>
+            Para visualizar el comparativo entre emociones y criterios cuantativos, por favor de clic en el icono
+            <i class="bi bi-arrow-right-circle"> </i> o en el titulo
+            <label class="bg-color-blue-aqua text-light" >
+              Criterios Cuantitativos</label> o  <label class="bg-color-prim text-light" >
+               Emociones </label>
+            </p>
+          </div>
+        </div>
+        <div id="bar-content" class="d-flex justify-content-center">
+          {{ plot_sunburst|safe }}
+        </div>
+      </div>
+    </div>
+   
+  </div>
+  <div class="col-4">
+    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <div class="card padding-100" style="width: 100%;height: 100%">
+            <div class="card-body">
+              <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded" id="bt-comparative-emo"
+              ><i class="bi bi-arrow-right-circle"></i>Emociones</h5>
+              <h6 class="card-subtitle mb-2 text-muted justify-content-start text-justify">En esta sesión se presentan las emociones identificadas a través del análisis de comentarios realizados por los estudiantes</h6>
+              <p class="card-text">
+                <ol class="list-group list-group-numbered" id="ol-emotions">
+                {% for emotion in list_emotions %}    
+                  <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                      <div class="fw-bold"><label>{{emotion.value_class}}</label></div>
+                    </div>
+                    <span class="badge bg-color-{{emotion.value_class}} rounded-pill">{{emotion.value_total}}</span>
+                  </li>            
+                {% endfor %}
+                </ol>
+              </p>
+              <div class="d-flex justify-content-center">
+                <button type="button"   id="bt-comparative" style="align-content: center;text-align: center;" 
+                      class="btn btn-primary d-flex justify-content-center bg-color-prim" onclick="get_comparative()">
+                    Ver comparativo
+                </button>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <div class="card padding-100" style="width: 100%;height: 100%">
+          <div class="card-body">
+            <h5 class="card-title bg-color-blue-aqua text-light shadow p-3 mb-3 rounded" id="bt-comparative-criteria" >
+              <i class="bi bi-arrow-right-circle"></i> 
+                Criterios Cuantitativos
+             
+            </h5>
+            <h6 class="card-subtitle mb-2 text-muted text-justify">En esta sesión se expondrán los resultados cuantitativos obtenidos para cada uno de los criterios.</h6>
+            <p class="card-text">
+              <ol  class="list-group list-group-numbered">
+                {% for criteria in list_criterias %}    
+                  <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                      <div class="fw-bold">{{criteria.value_class}}</div>
+                    </div>
+                    <span class="badge bg-color-blue-aqua rounded-pill">{{criteria.value_total|floatformat:"1" }}</span>
+                  </li>            
+                {% endfor %}
+                </ol>
+            </p>
+            <div class="d-flex justify-content-center">       
+              <button type="button" style="align-content: center;text-align: center;" class="btn btn-primary d-flex justify-content-center bg-color-prim"
+              onclick="get_comparative()">
+                  Ver comparativo
+              </button> 
+            </div>
+
+          </div>
+        </div>
+        </div>
+      </div>
+      <button class="carousel-control-prev button-carousel-teacher " type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon bg-color-prim icon-carousel-teacher " aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next button-carousel-teacher" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+        <span class="carousel-control-next-icon bg-color-prim icon-carousel-teacher" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+      
+    </div>        
+  </div>
+</div>
+</br>
+<!--Tabla de comentarios-->
+<div class="row" >
+  <div class="col-12"> 
+    <div class="form-group item-display-none" id="div-search-comments" >
+      <input type="text" class="form-control" id="in-search-comments" placeholder="Buscar">
+  </div>
+    <table class="table item-display-none" id="table-comments"  data-pagination="true">
+      <thead class="text-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Clase</th>
+          <th scope="col">Comentario</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+    <nav>
+        <ul class="pagination justify-content-end" id="paginator-comments"></ul>
+    </nav>
+  </div>
+</div>
+
+<script>
+  function load_bar_emotions_or_criterias(is_emotions){
+    var id_teacher= $("#div-teacher").text().trim();
+   
+    var ciclo = $("#lb_ciclo").text().trim();
+    var csrftoken = getCookie('csrftoken');
+    $.ajax({
+        url: 'pages/plots_emotions_criterias_teacher_bar', 
+        type: 'POST',
+        data: {
+            'id_teacher':id_teacher,
+            'ciclo':ciclo,
+            'name':'',
+            'is_emotion':is_emotions
+        },
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        },
+        success: function(response) {
+          $('#bar-content').html(response.plot_bar);
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+
+  }
+
+  function get_comparative(){
+    var id = $('#div-teacher').text().trim();
+    var name_teacher=$("#div-name-teacher").text().trim();
+    var csrftoken = getCookie('csrftoken');
+    $.ajax({
+        url: 'pages/get_comparatives', 
+        type: 'POST',
+        data: {
+            'id_teacher':id,
+            'name_teacher':name_teacher
+        },
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        },
+        success: function(response) {
+            $('#contenido_plots').html(response);
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+  }
+ 
+
+  document.getElementById('bt-comparative-emo').addEventListener('click', function(event) {
+      load_bar_emotions_or_criterias('true')
+  });
+
+  document.getElementById('bt-comparative-criteria').addEventListener('click', function(event) {
+      console.log("Entra adsd")
+      load_bar_emotions_or_criterias('false')
+  });
+
+  $(document).ready(function() {
+    var csrftoken = getCookie('csrftoken');
+    var table_comments=[]
+    var emotion ='';
+      $("#ol-emotions").on("click", "li", function() {
+        emotion = $(this).find("label").text().trim();
+        var id_teacher= $("#div-teacher").text().trim();
+        var ciclo = $("#lb_ciclo").text().trim();
+    
+        $.ajax({
+          url: 'pages/get_comments', 
+          type: 'POST',
+          data: {
+              'emotion': emotion,
+              'ciclo':ciclo,
+              'id_teacher':id_teacher
+          },
+          beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          },
+          success: function(response) {
+                table_comments=response.list_comments       
+                loadTable(table_comments,1,5)
+                generatePagination(table_comments.length, 5, 1);
+          },
+          error: function(xhr, status, error) {
+              console.error(error);
+          }
+      });
+    });
+
+  
+
+    $("#in-search-comments").keyup(function() {
+        var search = $(this).val().toLowerCase();
+        var filtro = table_comments.filter(function(dato) {
+            return dato.comment.toLowerCase().includes(search) || dato.course.toLowerCase().includes(search);
+        });
+        loadTable(filtro, 1, 5); 
+        generatePagination(filtro.length, 5, 1);
+    });
+
+    $("#table-course").on("click", "tr td i", function() {
+          var id_course =  $(this).closest("tr").find("td:eq(2)").text().trim();
+          var name_option = $(this).closest("tr").find("td:eq(4)").text().trim();
+          var ciclo = $("#lb_ciclo").text().trim();
+          url= 'pages/plots_courses'
+          data= {
+            'id_course': id_course,
+            'name':name_option,
+            'ciclo':ciclo
+          }
+          $.ajax({
+            url: url, 
+            type: 'POST',
+            data: data,
+            beforeSend: function(xhr, settings) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            },
+            success: function(response) {
+                $('#collapse-filter').removeClass('show');
+                $('#contenido_plots').html(response);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+      
+    });
+    function loadTable(table, pagina, itemsPorPagina) {
+      var inicio = (pagina - 1) * itemsPorPagina;
+      var fin = inicio + itemsPorPagina;
+      var filtro = table.slice(inicio, fin);
+      $('#table-comments tbody').empty();
+      $.each(filtro, function(index, row) {
+        var row = '<tr><td>' + (index+1) + '</td><td>' + row.course + '</td><td>' + row.comment + '</td></tr>';
+        $('#table-comments tbody').append(row); 
+      });  
+      $('#table-comments thead').removeClass()
+      $('#table-comments').removeClass("item-display-none")
+      $('#div-search-comments').removeClass("item-display-none")
+      console.log("EMOCIONNNN",emotion)
+      $('#table-comments thead').addClass("text-light bg-color-"+emotion)
+      
+      }
+  
+    function generatePagination(totalItems, itemsPorPagina, paginaActual) {
+        var totalPages = Math.ceil(totalItems / itemsPorPagina);
+        $('#paginator-comments').empty();
+        var prevDisabled = (paginaActual === 1) ? "disabled" : "";
+        var nextDisabled = (paginaActual === totalPages) ? "disabled" : "";
+        var html = '<li class="page-item ' + prevDisabled + '"><a class="page-link color-prim" href="#" data-page="' + (paginaActual - 1) + '">Anterior</a></li>';
+        for (var i = 1; i <= totalPages; i++) {
+            var active = (paginaActual === i) ? "active" : "";
+            var color = active=="active" ? "bg-color-prim" : "color-prim";
+            html += '<li class="page-item ' + active + '"><a class="page-link  '+color+ '" href="#" data-page="' + i + '">' + i + '</a></li>';
+        }
+        html += '<li class="page-item ' + nextDisabled + '"><a class="page-link color-prim" href="#" data-page="' + (paginaActual + 1) + '">Siguiente</a></li>';
+        $('#paginator-comments').html(html);
+  
+        $(".page-link").click(function(event) {
+            event.preventDefault();
+            var pagina = parseInt($(this).data("page"));
+            loadTable(table_comments, pagina, itemsPorPagina);
+            generatePagination(table_comments.length, itemsPorPagina, pagina);
+        });
+    }
+   
+  
+})
+ </script>

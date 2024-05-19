@@ -1,0 +1,46 @@
+{% load static %}
+ <div class="container">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-6"> 
+            <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded">Resultado de entrenamiento</h5>
+                </br>
+                <table class="table " id="table-data"  data-pagination="true">
+                    <thead class="bg-color-prim text-light">
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">precision</th>
+                        <th scope="col">recall</th>
+                        <th scope="col">f1-score</th>
+                        <th scope="col">support</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for data_measuremente in list_data.0.list_measurement %}                   
+                        <tr>
+                        {% for  data  in data_measuremente %}         
+                        <td scope="row"> {{ data }}</td>
+                        {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+              </table>
+            </div>
+            </div>
+        </div>
+        <div class="col-6"> 
+          <div class="card">
+            <div class="card-body text-center">
+              <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded">Matriz de confusión</h5>
+        
+                {{ plot_heat_map|safe }}
+            </div>
+          </div>
+        </div>
+
+    </div>
+    
+ </div>
+ 
