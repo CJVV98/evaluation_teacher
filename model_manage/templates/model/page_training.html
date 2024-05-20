@@ -1,6 +1,72 @@
 {% load static %}
- <div class="container">
+<br/>
+<br/>
+<div class="container">
     {% csrf_token %}
+    <div class="card">
+      <div class="card-body text-center">
+          <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded">Entrenamiento del modelo</h5>
+          </br>
+        <div class="row">
+          <div class="row g-2">
+            <div class="col-md">
+              <div class="form-floating">
+                <input class="form-control" id="parameter-c" placeholder="C" value="0">
+                <label for="floatingInputGrid">Parametro C</label>
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="form-floating">
+                <input class="form-control" id="parameter-gamma" placeholder="GAMMA" value="0">
+                <label for="floatingInputGrid">Parametro GAMMA</label>
+              </div>
+            </div>
+
+            <div class="col-md">
+              <div class="form-floating">
+                <input class="form-control" id="parameter-random" placeholder="RANDOM_STATE" value="0">
+                <label for="floatingInputGrid">Parametro RANDOM</label>
+              </div>
+            </div>
+
+        
+          </div>
+        </div>
+        <div class="row">
+          <div class="row g-2">
+            <div class="col-md">
+              <div class="form-floating">
+                <select class="form-select" id="sl-comments">
+                  <option value="4000">4000</option>
+                  <option value="5000">5000</option>
+                  <option value="6347">6347</option>
+                </select>
+                <label for="floatingSelectGrid">Cantidad de comentarios</label>
+              </div>
+            </div>
+            <div class="col-md">
+              <div class="form-floating">
+                <select class="form-select" id="sl-kernel">
+                  <option value="rbf">RBF</option>
+                  <option value="kernel">Linear</option>
+                </select>
+                <label for="floatingSelectGrid">Kernel</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-4 "></div>
+          <div class="row w-25 p-3">
+            <button type="button" id="bt-entrenar" class="btn btn-primary bg-color-prim btn-sm">Entrenar</button>
+          </div>
+          <div class="col-3"></div>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <br/>
+
     <div class="row">
         <div class="col-6"> 
             <div class="card">
@@ -44,3 +110,29 @@
     
  </div>
  
+ <script>
+    $(document).ready(function() {
+        $("#bt-entrenar").click(function(){
+            var csrftoken = getCookie('csrftoken');
+            var data = {
+                'parameter_c': $("#parameter-c").val(),
+                'parameter_gamma': $("#parameter-gamma").val(),
+                'parameter_random': $("#parameter-random").val(),
+                'count_comments': $("#sl-comments").val(),
+                'kernel': $("#sl-kernel").val(),
+            }
+            $.ajax({
+                type: "POST",
+                url: "model/trainig_model",
+                data: data,
+                headers: { "X-CSRFToken": csrftoken },
+                success: function(response) {
+                    console.log(response)
+                },
+                error: function(response) {
+                    console.log(response)
+                }
+            });
+        });
+    }); 
+  </script>

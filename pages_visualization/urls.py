@@ -16,4 +16,5 @@ core_patterns_pages = ([
     path('get_counts_general',get_counts_general , name='get_counts_general'),
     path('plots_emotions_criterias_teacher_bar',plots_emotions_criterias_teacher_bar,name='plots_emotions_criterias_teacher_bar'),
     path('get_comments',get_comments,name="get_comments"),
+    path('get_list_emotions_negative',get_list_emotions_negative,name="get_list_emotions_negative"),
 ], "pages")

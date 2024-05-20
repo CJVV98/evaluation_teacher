@@ -77,12 +77,13 @@ def load_xls_evaluations():
                         cant_consolidado_crit_n_s= float(calification['cant_consolidado_crit_n_s']),
                         evaluation=evaluation_search)
 
-        i=i+1
+     
         if float(calification['prom_criterio'])<4:
             Control.objects.create(id_teacher=int(evaluation[0]['id_teacher']), name=teacher.name,prom_criteria=float(calification['prom_criterio']),
                                             criteria=calification['criterio'],ciclo=calification['ciclo'],course=evaluation[0]['description'],
                                             evaluation=evaluation_search)
-
+        i=i+1
+        
 def load_xls_comments():
     comments=[]
     df_sheet=pd.read_excel('/Users/corinviracacha/Documents/Proyectos/ProyectoEvaluacionDocente/evaluation_teacher/utils/resources/comentarios.xls', index_col=0, sheet_name=0)

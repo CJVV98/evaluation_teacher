@@ -7,6 +7,8 @@ from user_manage.models import User
 from model_manage.models import Model
 from mongoengine.queryset.visitor import Q # type: ignore
 import functools
+import pandas as pd
+
 
 
 class DataUtils():
@@ -54,7 +56,10 @@ class DataUtils():
 
     def get_list_alerts_criteria(ciclo):
         list_alerts=list(Control.objects.aggregate(Control.get_control(int(ciclo))))
-        return list_alerts
+        df_control=pd.DataFrame(list_alerts)
+        df_control_=df_control.groupby(['id_teacher','name','course'])['prom_criteria'].mean().reset_index()
+        list_alerts_group=[{'id_teacher':row['id_teacher'],'name': row['name'],'course':row['course'],'prom_criteria':f"{row['prom_criteria']:.2f}"} for index, row in df_control_.iterrows()]
+        return list_alerts_group, list_alerts
 
 
     def get_data_list_users(user):
@@ -102,3 +107,9 @@ class DataUtils():
         list_data=list(Evaluation.objects.aggregate(Evaluation.get_count_comments(int(id_teacher),int(cycle))))
         print(list_data)
         return list_data[0]['sum_comments']
+    
+    def get_list_emotions_negative(cycle,id_teacher, id_course):
+        list_data=list(Evaluation.objects.aggregate(Evaluation.get_emotions_neg(int(cycle),int(id_teacher),id_course)))
+        list_emotions={ 0:"Miedo",1:"Enojo",2:"Tristeza",3:"Sorpresa",4:"Alegria",5:"Confianza",6:"others"}
+        list_data_ =[{"count_emotions": item["count_emotions"], "emotion":list_emotions[int(item['value_class'][1:-1])] } for item in list_data]
+        return list_data_

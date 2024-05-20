@@ -30,7 +30,8 @@ nltk.download('stopwords')
 nlp = spacy.load('es_core_news_sm')
 
 class ModelSupportVectorMachine:
-  def proc_info(word):
+  RUTA='/Users/corinviracacha/Documents/Proyectos/ProyectoEvaluacionDocente/evaluation_teacher/utils/resources/'
+  def proc_info(self,word):
     #Eliminar caracteres especiales
     letters_comment = re.sub("[^A-Za-záéíóúñÁÉÍÓÚÑ]", " ", word)
     #Eliminar palabras repetidas más de dos veces
@@ -41,13 +42,13 @@ class ModelSupportVectorMachine:
     lower_words=union_words.lower();
     return lower_words
 
-  def proc_tokenize(lower_words):
+  def proc_tokenize(self,lower_words):
     #Tokenizar el comentario por palabras
     tokens = word_tokenize(lower_words)
     tokens_words=[x for x in tokens if len(x) > 1]
     return tokens_words
 
-  def delete_stop_word(tokens_words):
+  def delete_stop_word(self,tokens_words):
     #Eliminar StopWords
     stop = set(stopwords.words('spanish'))
     # Guardar en la lista las palabras que no son stopwords
@@ -58,17 +59,17 @@ class ModelSupportVectorMachine:
     return stop_token_
 
 
-  def lemmatize_words(word):
+  def lemmatize_words(self,word):
     doc = nlp(word)
     lemmas = [tok.lemma_.lower() for tok in doc]
     return lemmas
 
 
-  def proc_lemmatize_and_stemming(stop_tokens):
+  def proc_lemmatize_and_stemming(self,stop_tokens):
     SnowballStemmer('spanish')
     #Se lematiza por palabra
     lemmas = [model.lemmatize_words(word) for word in stop_tokens]
-    stems = [' '.join([item[0] for item in lemmas])];
+    stems = [' '.join([item[0] for item in lemmas])]
     #Se hace stemming para definir las raices de las palabras
     #stems = [' '.join([spanishstemmer.stem(lemma) for lemma in flattened_list])]
     comment_proc=str(stems)
@@ -77,7 +78,7 @@ class ModelSupportVectorMachine:
 
 
 
-  def remove_emojis(text):
+  def remove_emojis(self,text):
       # Utiliza una expresión regular para eliminar emojis
       emoji_pattern = re.compile("["
                             u"\U0001F600-\U0001F64F"  # emoticones
@@ -96,20 +97,31 @@ class ModelSupportVectorMachine:
       # Reemplaza los emojis con una cadena vacía
       return emoji_pattern.sub(r'', text)
 
-  def proc_vectorizer(comment):
+  def proc_vectorizer(self,comment):
       vectorizer = model.load_vectorizador()
       new_comment=vectorizer.transform([comment])
       return new_comment
 
-  def proc_text(comment):
+  def proc_text(self,comment):
     words=model.proc_info(comment)
     words_tokenize=model.proc_tokenize(words)
     words_delete_stop_word=model.delete_stop_word(words_tokenize)
     words_lemmatizee=model.proc_lemmatize_and_stemming(words_delete_stop_word)
     return words_lemmatizee
 
+  def train_model_with_parameters(counts_comments,parameter_c,parameter_gamma,parmeter_random, kernel):
+    match int(counts_comments):
+      case 3000:
+        name_file=model.RUTA+'dataset_test.csv'
+      case 4000:
+        name_file=model.RUTA+'dataset_test.csv'
+      case _:  
+        name_file=model.RUTA+'dataset_test.csv'
 
-  def load_file(name_file):
+    model.load_file(name_file,int(parameter_c),float(parameter_gamma),int(parmeter_random), kernel) 
+      
+
+  def load_file(self,name_file,parameter_c,parameter_gamma,parmeter_random, kernel):
     #dwn_url_pruebas='/content/drive/MyDrive/ProyectoGrado/Maestria/Evaluaciones/dataset_test__44.csv'
     date_start=datetime.now()
     dwn_url_pruebas=name_file
@@ -120,20 +132,19 @@ class ModelSupportVectorMachine:
     print(df_test)
     for index, row in df_pruebas.iterrows():
         comment = str(row['Comentario'])
-        #comment_clasify = generate_type_comment(comment);
         comment_without_emojis = model.remove_emojis(comment)
         comment_proc = model.proc_text(comment_without_emojis)
         new_row = pa.DataFrame({'Comentario': comment_proc, 'Emocion': row['Emocion']},index=[0])
         df_test = pa.concat([df_test, new_row], ignore_index=True)
     mapeo = {'scared': 0, 'mad': 1, 'sad': 2, 'surprise':3,'joyful':4, 'trust':5,'others':6}
     df_test['Emocion'] = df_test['Emocion'].map(mapeo)
-    model.training_model(df_test,dwn_url_pruebas,date_start)
+    model.training_model(df_test,dwn_url_pruebas,date_start,parameter_c,parameter_gamma,parmeter_random, kernel)
 
 
-  def training_model(df_test,name_file,date_start):
+  def training_model(self,df_test,name_file,date_start,parameter_c,parameter_gamma,parmeter_random, kernel):
       
     # Dividir los datos en conjunto de entrenamiento y prueba
-    X_train, X_test, y_train, y_test = train_test_split(df_test["Comentario"],df_test["Emocion"], test_size=0.2, random_state=20)
+    X_train, X_test, y_train, y_test = train_test_split(df_test["Comentario"],df_test["Emocion"], test_size=0.2, random_state=parmeter_random)
 
     # Escalamiento de datos
 
@@ -142,7 +153,11 @@ class ModelSupportVectorMachine:
     X_test_tfidf = vectorizer.transform(X_test)
 
     # Inicializar y entrenar el modelo SVM
-    svm_model  = SVC(kernel = "linear", random_state = 20)
+    svm_model  = SVC(C=parameter_c, cache_size=200, class_weight=None, coef0=0.0,
+      decision_function_shape='ovr', degree=6,
+      gamma=parameter_gamma, kernel=kernel,
+      probability=False, random_state=42, shrinking=True,
+      verbose=False)
     y_train_encoded = y_train
     svm_model.fit(X_train_tfidf, y_train_encoded)
 
@@ -163,7 +178,7 @@ class ModelSupportVectorMachine:
                                     list_measurement=list_measurment,matrix=cm.tolist(),date_start=date_start,date_end=date_end)
 
 
-  def convert_str_to_list(list_measurment):
+  def convert_str_to_list(self,list_measurment):
     list_measurment_convert=[]
     rows = list_measurment.strip().split('\n')
     for row in rows:

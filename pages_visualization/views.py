@@ -110,8 +110,9 @@ def get_comments(request):
 
 def get_list_alerts(request):
     ciclo = request.POST.get('ciclo', None)
-    list_alerts=DataUtils.get_list_alerts_criteria(int(ciclo))
-    return JsonResponse({'list_alerts': list_alerts})
+    list_alerts, list_alerts_details=DataUtils.get_list_alerts_criteria(int(ciclo))
+    return JsonResponse({'list_alerts': list_alerts,
+                         'list_alerts_details':list_alerts_details})
 
 def plots_emotions_criterias_teacher_bar(request):
     id_teacher = request.POST.get('id_teacher', None)
@@ -128,3 +129,11 @@ def get_counts_general(request):
     cycle = request.POST.get('cycle', None)
     courses,teachers,evaluations=DataUtils.counts_general(int(cycle))
     return JsonResponse({'courses':courses,'teachers':teachers,'evaluations':evaluations})
+
+
+def get_list_emotions_negative(request):
+    ciclo = request.POST.get('ciclo', None)
+    id_course = request.POST.get('id_course', None)
+    id_teacher= request.POST.get('id_teacher', None)
+    list_emotions=DataUtils.get_list_emotions_negative(ciclo,id_teacher, id_course)
+    return JsonResponse({'list_emotions': list_emotions})

@@ -29,8 +29,8 @@
             <th scope="col">#</th>
             <th scope="col">Nombre del docente</th>
             <th scope="col">Asignatura</th>
-            <th scope="col">Criterio</th>
             <th scope="col">Calificación</th>
+            <th scope="col">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -42,9 +42,43 @@
       </nav>
     </div>
   </div>
-
+</br></br>
+  <div  class="row item-display-none">
+    <div class="col-2"> </div>
+    <div id="div-detail" class="col-8 item-display-none"> 
+        <div class="card ">
+          <div class="card-body">
+            <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 text-center rounded">Docente</h5>
+            <h6 class="card-subtitle mb-2 text-muted text-center" id="name-class">Asignatura</h6>
+            </br>
+            <div class="row">
+              <div class="col-sm-6 mb-3 mb-sm-0">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted" id="name-class">Criterios con menor calificación</h6>
+                    <ul class="list-group list-group-vertical" id="ls-criterias">
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted" id="name-class">Emociones</h6>
+                    <ul class="list-group list-group-vertical" id="ls-emotions">
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="col-2"> </div>
+  </div>
   <script>
     var table_alerts =[];
+    var table_alerts_details =[];
     loadContent();
     $(document).ready(function() {
       console.log("Entrnado aqui")
@@ -53,8 +87,8 @@
           var filtro = table_alerts.filter(function(dato) {
               return dato.name.toLowerCase().includes(search) || dato.course.toLowerCase().includes(search);
           });
-          loadTable(filtro, 1, 10); 
-          generatePagination(filtro.length, 10, 1);
+          loadTable(filtro, 1, 6); 
+          generatePagination(filtro.length, 6, 1);
       });
       $("#list-ciclo li").click(function() {
         var ciclo = $(this).text().trim();
@@ -62,6 +96,55 @@
         loadContent();
 
       });
+      $("#table-alerts").on("click", "tr td", function() {
+          var id_course=''
+          var id_teacher=  $(this).closest("tr").find("td:eq(0)").text().trim();
+          var name_course= $(this).closest("tr").find("td:eq(2)").text().trim();
+          var table_filter_details=table_alerts_details.filter(function(course) {
+              return course.id_teacher==id_teacher && course.course==name_course;
+          });
+          $("#name-teacher").text(table_filter_details[0].name);
+          $("#name-class").text(table_filter_details[0].course);
+          $('#div-detail').removeClass("item-display-none");
+          $("#ls-criterias").empty();
+          $.each(table_filter_details, function(index, row) {
+              id_course=row.course;
+              var row = '<li class="list-group-item">'+ row.criteria + ' <span class="badge bg-primary rounded-pill">'+ row.prom_criteria +'</span></li>';
+              $('#ls-criterias').append(row); 
+          });
+          console.log(id_course,id_teacher)
+          get_emotions(id_course,id_teacher)
+
+      })
+
+      function get_emotions(id_course,id_teacher){
+          var ciclo = $("#lb_ciclo").text().trim();
+          var csrftoken = getCookie('csrftoken');
+          $("#ls-emotions").empty();
+          $.ajax({
+            url: 'pages/get_list_emotions_negative', 
+            type: 'POST',
+            data: {
+                'ciclo':ciclo,
+                'id_course':id_course,
+                'id_teacher':id_teacher
+            },
+           
+            beforeSend: function(xhr, settings) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            },
+            success: function(response) {
+              $.each(response.list_emotions, function(index, row) {
+                id_course=row.id_course;
+                var row = '<li class="list-group-item">'+ row.emotion + ' <span class="badge bg-color-'+ row.emotion +' rounded-pill">'+ row.count_emotions +'</span></li>';
+                $('#ls-emotions').append(row); 
+              });
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+         });
+      }
     });
     function loadContent(){
       var ciclo = $("#lb_ciclo").text().trim();
@@ -76,9 +159,11 @@
           xhr.setRequestHeader("X-CSRFToken", csrftoken);
         },
         success: function(response) {
-              table_alerts=response.list_alerts       
-              loadTable(table_alerts,1,10)
-              generatePagination(table_alerts.length, 10, 1);
+              table_alerts=response.list_alerts  
+              table_alerts_details=response.list_alerts_details 
+              console.log(table_alerts_details)    
+              loadTable(table_alerts,1,6)
+              generatePagination(table_alerts.length, 6, 1);
         },
         error: function(xhr, status, error) {
             console.error(error);
@@ -92,7 +177,8 @@
       var filtro = table.slice(inicio, fin);
       $('#table-alerts tbody').empty();
       $.each(filtro, function(index, row) {
-        var row = '<tr><td>' + (index+1) + '</td><td>' + row.name + '</td><td>' + row.course +'</td><td>' + row.criteria +  '</td><td>' + row.prom_criteria + '</td></tr>';
+        var row = '<tr><td>' + row.id_teacher+ '</td><td>' + row.name + '</td><td>' + row.course +'</td><td>'
+           + row.prom_criteria + '</td>'+ '<td><button type="button" class="btn btn-primary bg-color-prim">Ver</button></td></tr>';
         $('#table-alerts tbody').append(row); 
       });  
       $('#table-alerts thead').removeClass()

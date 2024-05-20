@@ -5,6 +5,9 @@ class Teacher(Document):
     id_teacher =IntField(required=True, unique=True)
     name =StringField(required=True, unique=False)
 
+    """
+        Usado para obtener los cursos por profesor
+    """
     def get_courses_by_teacher(id, ciclo):
         pipeline=[
             {
@@ -52,6 +55,9 @@ class Evaluation(Document):
     description =StringField(required=True, unique=False)
     teacher= ReferenceField(Teacher)
 
+    """
+       Usado para obtener los cursos con más comentarios por profesor
+    """
     def get_top_emotion(emotion, ciclo):
         pipeline_top_emotions_class=[
                 {
@@ -84,7 +90,9 @@ class Evaluation(Document):
                 }
         ]
         return pipeline_top_emotions_class
-
+    """
+        Obtener los cursos por ciclo academico
+    """
     def get_courses(ciclo):
         pipeline_teachers=[
             {
@@ -108,7 +116,9 @@ class Evaluation(Document):
             }
         ]
         return pipeline_teachers
-    
+    """
+        Usado para obtener los comentarios por profesor
+    """
     def get_emotions_by_teacher(id,name,ciclo):
 
         pipeline_emotions=[
@@ -202,7 +212,9 @@ class Evaluation(Document):
             }
         ]
         return pipeline_emotions
-    
+    """
+        Agrupar comentarios por emoción y docente
+    """
     def get_group_emotions_by_teacher(id,name,ciclo):
         pipeline_emotions=[
             {
@@ -241,7 +253,9 @@ class Evaluation(Document):
             }
             ]
         return pipeline_emotions
-    
+    """
+        Usado para obtener los criterios cuantitativos por profesor
+    """
     def get_criterias_by_teacher(id,name,ciclo):
         pipeline_calification= [
             {
@@ -290,7 +304,9 @@ class Evaluation(Document):
             }
         ]
         return pipeline_calification
-    
+    """
+        Agrupar criterios por docente para mostrar general
+    """
     def get_group_criterias_by_teacher(id,name, ciclo):
         pipeline_calification= [
             {
@@ -330,7 +346,9 @@ class Evaluation(Document):
             }
         ]
         return pipeline_calification
-
+    """
+        Obtener docentes por asignatura
+    """
     def get_teachers_by_course(id, name, ciclo):
         pipeline=[
             {
@@ -430,7 +448,9 @@ class Evaluation(Document):
             }
         ]
         return pipeline
-    
+    """
+        Obtener comentarios por docente
+    """
     def get_comments_by_teacher(id, ciclo, emotion):
         pipeline=[
             {
@@ -468,7 +488,9 @@ class Evaluation(Document):
             }
         ]
         return pipeline
-
+    """
+        Obtener emociones por ciclo y docente
+    """
     def get_emotions_group_ciclo(id):
         pipeline=[
             {
@@ -552,7 +574,9 @@ class Evaluation(Document):
             }
         ]
         return pipeline
-
+    """
+        Obtener criterios por ciclo y docente
+    """
     def get_criteria_group_ciclo(id):
 
         pipeline=[
@@ -601,7 +625,9 @@ class Evaluation(Document):
             }
         ]   
         return pipeline
-
+    """
+        Obtener criterios por asignatura y ciclo
+    """
     def get_criteria_group_course_and_cycle(id, cycle):
         pipeline=[
             {
@@ -667,7 +693,9 @@ class Evaluation(Document):
             }
         ]
         return pipeline
-
+    """
+        Obtener cantidad de evluaciones por ciclo
+    """
     def count_evaluations(cycle):
         pipeline=[
             {
@@ -684,7 +712,9 @@ class Evaluation(Document):
             }
         ]
         return pipeline
-    
+    """
+        Obtener cantidad de docentes por ciclo
+    """
     def count_teachers(cycle):
         pipeline=[
             {
@@ -708,7 +738,9 @@ class Evaluation(Document):
             }
         ]
         return pipeline
-    
+    """
+        Obtener cantidad de cursos por ciclo
+    """
     def count_courses(cycle):
         pipeline=[
             {
@@ -733,7 +765,9 @@ class Evaluation(Document):
             }	
         ]
         return pipeline
-
+    """
+        Obtener información general de las encuestas
+    """
     def get_general_data(cycle,id_teacher):
         pipeline=[
             {
@@ -804,7 +838,9 @@ class Evaluation(Document):
             }
         ]
         return pipeline
-
+    """
+        Obtener cantidad de comentarios por docente
+    """
     def get_count_comments(id_teacher, cycle):
         pipeline=[
             {
@@ -842,6 +878,58 @@ class Evaluation(Document):
             }
         ]
         return pipeline
+    """
+        Obtener comentarios negativos por docente
+    """
+    def get_emotions_neg(ciclo,id_teacher, id_course):
+        pipeline=[
+            {
+                '$match': {
+                    'id_teacher': id_teacher, 
+                    'description': id_course, 
+                    'ciclo': ciclo
+                }
+            }, {
+                '$lookup': {
+                    'from': 'comment', 
+                    'localField': '_id', 
+                    'foreignField': 'evaluation', 
+                    'as': 'comments_student'
+                }
+            }, {
+                '$unwind': '$comments_student'
+            }, {
+                '$addFields': {
+                    'emotion': '$comments_student.emotion', 
+                    'id_course': '$id_course', 
+                    'num_clase': '$num_clase', 
+                    'name_clase': '$description'
+                }
+            }, {
+                '$group': {
+                    '_id': {
+                        'name_class': '$name_clase', 
+                        'emotion': '$emotion', 
+                        'id_course': '$id_course'
+                    }, 
+                    'cantidad': {
+                        '$sum': 1
+                    }
+                }
+            }, {
+                '$project': {
+                    '_id': 0, 
+                    'class_val': 'Emociones', 
+                    'name_class': '$_id.name_class', 
+                    'value_class': '$_id.emotion', 
+                    'value_total': '$_id.media', 
+                    'count_emotions': '$cantidad'
+                }
+            }
+        ]
+        return pipeline
+    
+
 class Comment(Document):
     comment =StringField(required=True, unique=False)
     comment_base =StringField(required=True, unique=False)
@@ -892,6 +980,9 @@ class Calification(Document):
     cant_consolidado_crit_6= FloatField(required=False, unique=False) 
     cant_consolidado_crit_n_s= FloatField(required=False, unique=False) 
     evaluation= ReferenceField(Evaluation)
+    """
+        Obtener calificaciones por criterio y ciclo
+    """
     def get_criteria(ciclo):
         pipeline=[
             {
@@ -913,7 +1004,9 @@ class Calification(Document):
             }
         ]
         return pipeline
-
+    """
+        Obtener consolidado de calificaciones por criterio y ciclo
+    """
     def get_calification_group(ciclo):
         pipeline_get_calification_count = [
             {
@@ -959,7 +1052,9 @@ class Control(Document):
     ciclo=IntField(required=True, unique=False)
     course=StringField(required=True, unique=False)
     evaluation= ReferenceField(Evaluation)
-
+    """
+        Obtener docentes con bajos resultados en criterios
+    """
     def get_control(ciclo):
         pipeline=[
             {
@@ -974,7 +1069,7 @@ class Control(Document):
                     'prom_criteria': '$prom_criteria', 
                     'criteria': '$criteria',
                     'ciclo': '$ciclo',
-                    'course': '$course'
+                    'course': '$course',
                 }
             },
             {

@@ -13,11 +13,21 @@ class Model(Document):
     date_start=DateTimeField(required=False, unique=False)
     date_end=DateTimeField(required=False, unique=False)
 
-
+    """
+        Usado para obtener los datos de entrenamiento del modelo
+    """
     def get_data_model():
-        pipeline=[{
-            '$project': {
-                '_id':0,
+        pipeline=[
+            {
+                '$project': {
+                    '_id': 0
+                }
+            }, {
+                '$sort': {
+                    'date_start': 1
+                }
+            }, {
+                '$limit': 1
             }
-        }]
+        ]
         return pipeline
