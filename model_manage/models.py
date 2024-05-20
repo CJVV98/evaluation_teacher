@@ -13,6 +13,7 @@ class Model(Document):
     date_start=DateTimeField(required=False, unique=False)
     date_end=DateTimeField(required=False, unique=False)
 
+
     def get_data_model():
         """
             Usado para obtener los datos de entrenamiento del modelo
