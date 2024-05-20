@@ -9,6 +9,7 @@ from utils.text_utils import separate_paragraph
 from utils.model.supportVectorMachine import load_model, proc_text, proc_vectorizer
 
 def load_xls_evaluations():
+    """Cargar evaluaciones desde archivo excel"""
     i=0
     df_sheet=pd.read_excel('/Users/corinviracacha/Documents/Proyectos/ProyectoEvaluacionDocente/evaluation_teacher/utils/resources/evaluaciones.xls', index_col=0, sheet_name=0)
     for _, row in df_sheet.iterrows():
@@ -83,8 +84,9 @@ def load_xls_evaluations():
                                             criteria=calification['criterio'],ciclo=calification['ciclo'],course=evaluation[0]['description'],
                                             evaluation=evaluation_search)
         i=i+1
-        
+
 def load_xls_comments():
+    """Cargar comentarios desde archivo excel"""
     comments=[]
     df_sheet=pd.read_excel('/Users/corinviracacha/Documents/Proyectos/ProyectoEvaluacionDocente/evaluation_teacher/utils/resources/comentarios.xls', index_col=0, sheet_name=0)
     model_svm=load_model()

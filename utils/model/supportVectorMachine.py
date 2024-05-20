@@ -32,6 +32,7 @@ nlp = spacy.load('es_core_news_sm')
 class ModelSupportVectorMachine:
   RUTA='/Users/corinviracacha/Documents/Proyectos/ProyectoEvaluacionDocente/evaluation_teacher/utils/resources/'
   def proc_info(self,word):
+    """Procesar la información del comentario"""
     #Eliminar caracteres especiales
     letters_comment = re.sub("[^A-Za-záéíóúñÁÉÍÓÚÑ]", " ", word)
     #Eliminar palabras repetidas más de dos veces

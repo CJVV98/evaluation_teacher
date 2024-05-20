@@ -12,10 +12,13 @@ from bokeh.embed import components
 
 
 
-
 class PlotsUtils():
-    BG_COLOR_WHITE='rgb(255, 255, 255)'
 
+    """
+    Clase que contiene los métodos para generar gráficos de barras, tortas, etc.
+    """
+    BG_COLOR_WHITE='rgb(255, 255, 255)'
+    
     def generate_donut_emotions(ciclo):
         list_emotion_count=list(Comment.objects.aggregate(Comment.get_emotion_count(int(ciclo))))
 

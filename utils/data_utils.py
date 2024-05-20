@@ -14,6 +14,7 @@ import pandas as pd
 class DataUtils():
    
     def return_list_select(option, ciclo):
+        """Retornar lista de información de acuerdo al filtro"""
         list_select=[]
         if option=='1':  
             list_select_teacher=Teacher.objects().all().values_list('id_teacher', 'name')
@@ -35,11 +36,13 @@ class DataUtils():
         return list_select
 
     def get_courses_by_teacher(id_teacher,ciclo):
+        """Retornar lista de cursos por profesor"""
         courses=list(Teacher.objects.aggregate(Teacher.get_courses_by_teacher(id_teacher,ciclo)))
         return courses
 
 
     def get_info_teacher(id,name, ciclo): 
+        """Retornar información de profesor en cuanto a emociones y criterios"""
         emotions={ '[0]':"Miedo",'[1]':"Enojo",'[2]':"Tristeza",'[3]':"Sorpresa",'[4]':"Alegria",'[5]':"Confianza",'[6]':"Otras"}
         list_criterias=list(Evaluation.objects.aggregate(Evaluation.get_group_criterias_by_teacher(id,name,ciclo)))
         list_emotions=list(Evaluation.objects.aggregate(Evaluation.get_group_emotions_by_teacher(id,name,ciclo)))
@@ -48,6 +51,7 @@ class DataUtils():
         return list_emotions_,list_criterias
 
     def get_comments_by_teacher(id,ciclo,emotion):
+        """Retornar comentarios por profesor"""
         emotions={ "Miedo":'[0]',"Enojo":'[1]',"Tristeza":'[2]',"Sorpresa":'[3]',"Alegria":'[4]',"Confianza":'[5]',"Otras":'[6]'}
         name_emotion = emotions.get(emotion, 'Desconocido')
         print(name_emotion)
@@ -55,6 +59,7 @@ class DataUtils():
         return list_comments
 
     def get_list_alerts_criteria(ciclo):
+        """Retornar lista de docentes con baja calificación en criterios"""
         list_alerts=list(Control.objects.aggregate(Control.get_control(int(ciclo))))
         df_control=pd.DataFrame(list_alerts)
         df_control_=df_control.groupby(['id_teacher','name','course'])['prom_criteria'].mean().reset_index()
@@ -63,15 +68,18 @@ class DataUtils():
 
 
     def get_data_list_users(user):
+        """Retornar lista de usuarios"""
         list_users=list(User.objects.aggregate(User.get_users(user)))
         return list_users
 
 
     def get_data_model_training():
+        """Retornar información del modelo entrenado"""
         list_training=list(Model.objects.aggregate(Model.get_data_model()))
         return list_training
 
     def counts_general(cycle):
+        """ Retornar cantidad de cursos, profesores y evaluaciones por ciclo"""
         courses=list(Evaluation.objects.aggregate(Evaluation.count_courses(int(cycle))))
         teachers=list(Evaluation.objects.aggregate(Evaluation.count_teachers(int(cycle))))
         evaluations=list(Evaluation.objects.aggregate(Evaluation.count_evaluations(int(cycle))))
@@ -79,10 +87,12 @@ class DataUtils():
 
 
     def get_data_user(email_form, user_form):
+        """Retornar información del usuario"""
         user= User.objects(Q(email=email_form) | Q(user=user_form))
         return user
 
     def create_modify_user(user_form):
+        """Crear o modificar usuario"""
         user=User.objects.filter(user=str(user_form['user'])).first()
         if user:
             user.names=str(user_form['names'])
@@ -95,20 +105,24 @@ class DataUtils():
 
 
     def modify_state(user,state):
+        """Modificar estado del usuario"""
         user=User.objects.filter(user=str(user)).first()
         user.state=state
         user.save()
 
     def get_list_data_count(cycle,id_teacher):
+        """Retornar lista de datos generales por profesor"""
         list_data=list(Evaluation.objects.aggregate(Evaluation.get_general_data(int(cycle),int(id_teacher))))
         return list_data
 
     def get_count_comments(cycle,id_teacher):
+        """Retornar cantidad de comentarios por profesor"""
         list_data=list(Evaluation.objects.aggregate(Evaluation.get_count_comments(int(id_teacher),int(cycle))))
         print(list_data)
         return list_data[0]['sum_comments']
     
     def get_list_emotions_negative(cycle,id_teacher, id_course):
+        """Retornar lista de emociones negativas por profesor"""
         list_data=list(Evaluation.objects.aggregate(Evaluation.get_emotions_neg(int(cycle),int(id_teacher),id_course)))
         list_emotions={ 0:"Miedo",1:"Enojo",2:"Tristeza",3:"Sorpresa",4:"Alegria",5:"Confianza",6:"others"}
         list_data_ =[{"count_emotions": item["count_emotions"], "emotion":list_emotions[int(item['value_class'][1:-1])] } for item in list_data]
