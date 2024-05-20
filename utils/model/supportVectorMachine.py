@@ -4,7 +4,7 @@ import numpy as np; # type: ignore
 import re;
 import spacy # type: ignore
 import tabula # type: ignore
-
+import os, sys
 from sklearn import svm, datasets # type: ignore
 from nltk import SnowballStemmer # type: ignore
 from unidecode import unidecode # type: ignore
@@ -30,7 +30,7 @@ nltk.download('stopwords')
 nlp = spacy.load('es_core_news_sm')
 
 class ModelSupportVectorMachine:
-  RUTA='/Users/corinviracacha/Documents/Proyectos/ProyectoEvaluacionDocente/evaluation_teacher/utils/resources/'
+  RUTA=os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
   def proc_info(self,word):
     """Procesar la información del comentario"""
     #Eliminar caracteres especiales
@@ -111,15 +111,16 @@ class ModelSupportVectorMachine:
     return words_lemmatizee
 
   def train_model_with_parameters(counts_comments,parameter_c,parameter_gamma,parmeter_random, kernel):
+
     match int(counts_comments):
       case 3000:
-        name_file=model.RUTA+'dataset_test.csv'
+        name_file=model.RUTA+'/resources/dataset_test__3000.csv'
       case 4000:
-        name_file=model.RUTA+'dataset_test.csv'
+        name_file=model.RUTA+'/resources/dataset_test__4000.csv'
       case _:  
-        name_file=model.RUTA+'dataset_test.csv'
-
-    model.load_file(name_file,int(parameter_c),float(parameter_gamma),int(parmeter_random), kernel) 
+        name_file=model.RUTA+'/resources/dataset_test__6000.csv'
+    print(parameter_c)
+    model.load_file(name_file,float(parameter_c),float(parameter_gamma),int(parmeter_random), kernel) 
       
 
   def load_file(self,name_file,parameter_c,parameter_gamma,parmeter_random, kernel):
@@ -138,7 +139,7 @@ class ModelSupportVectorMachine:
         if(len(comment_proc.strip())>0):
           new_row = pa.DataFrame({'Comentario': comment_proc, 'Emocion': row['Emocion']},index=[0])
           df_test = pa.concat([df_test, new_row], ignore_index=True)
-          
+
     mapeo = {'scared': 0, 'mad': 1, 'sad': 2, 'surprise':3,'joyful':4, 'trust':5,'others':6}
     df_test['Emocion'] = df_test['Emocion'].map(mapeo)
     model.training_model(df_test,dwn_url_pruebas,date_start,parameter_c,parameter_gamma,parmeter_random, kernel)
@@ -195,13 +196,13 @@ class ModelSupportVectorMachine:
     return  list_measurment_convert  
 
   def load_model():
-    modelo_cargado = load('/Users/corinviracacha/Documents/Proyectos/ProyectoEvaluacionDocente/evaluation_teacher/utils/resources/evaluacion_docente_svm.joblib')
+    modelo_cargado = load(model.RUTA+'/resources/evaluacion_docente_svm.joblib')
     return modelo_cargado
 
 
 
   def load_vectorizador():
-    model_vec = load('/Users/corinviracacha/Documents/Proyectos/ProyectoEvaluacionDocente/evaluation_teacher/utils/resources/vectorizador.joblib')
+    model_vec = load(model.RUTA+'/resources/resources/vectorizador.joblib')
     return model_vec
 
 
