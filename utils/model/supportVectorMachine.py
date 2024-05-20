@@ -135,8 +135,10 @@ class ModelSupportVectorMachine:
         comment = str(row['Comentario'])
         comment_without_emojis = model.remove_emojis(comment)
         comment_proc = model.proc_text(comment_without_emojis)
-        new_row = pa.DataFrame({'Comentario': comment_proc, 'Emocion': row['Emocion']},index=[0])
-        df_test = pa.concat([df_test, new_row], ignore_index=True)
+        if(len(comment_proc.strip())>0):
+          new_row = pa.DataFrame({'Comentario': comment_proc, 'Emocion': row['Emocion']},index=[0])
+          df_test = pa.concat([df_test, new_row], ignore_index=True)
+          
     mapeo = {'scared': 0, 'mad': 1, 'sad': 2, 'surprise':3,'joyful':4, 'trust':5,'others':6}
     df_test['Emocion'] = df_test['Emocion'].map(mapeo)
     model.training_model(df_test,dwn_url_pruebas,date_start,parameter_c,parameter_gamma,parmeter_random, kernel)

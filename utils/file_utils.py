@@ -109,6 +109,8 @@ def load_xls_comments():
                                                         num_clase=num_clase).first()
         for comment in comments:
                 new_comment=proc_text(str(comment))
+                if(len(new_comment)==0):
+                    continue
                 new_comment_tfidf = proc_vectorizer(new_comment)
                 emotion = model_svm.predict(new_comment_tfidf)
     

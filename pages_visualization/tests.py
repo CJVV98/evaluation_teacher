@@ -1,3 +1,4 @@
+from unittest import TestCase
 from  utils.data_utils import DataUtils
 
 # Create your tests here.
