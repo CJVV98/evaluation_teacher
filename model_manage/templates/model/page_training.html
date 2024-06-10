@@ -3,67 +3,88 @@
 <br/>
 <div class="container">
     {% csrf_token %}
-    <div class="card">
-      <div class="card-body text-center">
-          <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded">Entrenamiento del modelo</h5>
-          </br>
-        <div class="row">
-          <div class="row g-2">
-            <div class="col-md">
-              <div class="form-floating">
-                <input class="form-control" id="parameter-c" placeholder="C" value="0">
-                <label for="floatingInputGrid">Parametro C</label>
-              </div>
-            </div>
-            <div class="col-md">
-              <div class="form-floating">
-                <input class="form-control" id="parameter-gamma" placeholder="GAMMA" value="0">
-                <label for="floatingInputGrid">Parametro GAMMA</label>
-              </div>
-            </div>
+    <div class="row">
+      <div class="col-12"> 
+        <div class="accordion" id="accordionExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-filter" aria-expanded="true" aria-controls="collapse-filter">
+                Entrenamiento
+              </button>
+            </h2>
+            <div id="collapse-filter" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <div class="card">
+                  <div class="card-body text-center">
+                      <h5 class="card-title bg-color-prim text-light shadow p-3 mb-3 rounded">Entrenamiento del modelo</h5>
+                      </br>
+                    <div class="row">
+                      <div class="row g-2">
+                        <div class="col-md">
+                          <div class="form-floating">
+                            <input class="form-control" id="parameter-c" placeholder="C" value="0">
+                            <label for="floatingInputGrid">Parametro C</label>
+                          </div>
+                        </div>
+                        <div class="col-md">
+                          <div class="form-floating">
+                            <input class="form-control" id="parameter-gamma" placeholder="GAMMA" value="0">
+                            <label for="floatingInputGrid">Parametro GAMMA</label>
+                          </div>
+                        </div>
 
-            <div class="col-md">
-              <div class="form-floating">
-                <input class="form-control" id="parameter-random" placeholder="RANDOM_STATE" value="0">
-                <label for="floatingInputGrid">Parametro RANDOM</label>
-              </div>
-            </div>
+                        <div class="col-md">
+                          <div class="form-floating">
+                            <input class="form-control" id="parameter-random" placeholder="RANDOM_STATE" value="0">
+                            <label for="floatingInputGrid">Parametro RANDOM</label>
+                          </div>
+                        </div>
 
-        
-          </div>
-        </div>
-        <div class="row">
-          <div class="row g-2">
-            <div class="col-md">
-              <div class="form-floating">
-                <select class="form-select" id="sl-comments">
-                  <option value="3000">3000</option>
-                  <option value="4000">4000</option>
-                  <option value="6347">6347</option>
-                </select>
-                <label for="floatingSelectGrid">Cantidad de comentarios</label>
+                    
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="row g-2">
+                        <div class="col-md">
+                          <div class="form-floating">
+                            <select class="form-select" id="sl-comments">
+                              <option value="3000">3000</option>
+                              <option value="4000">4000</option>
+                              <option value="6347">6347</option>
+                            </select>
+                            <label for="floatingSelectGrid">Cantidad de comentarios</label>
+                          </div>
+                        </div>
+                        <div class="col-md">
+                          <div class="form-floating">
+                            <select class="form-select" id="sl-kernel">
+                              <option value="rbf">RBF</option>
+                              <option value="kernel">Linear</option>
+                            </select>
+                            <label for="floatingSelectGrid">Kernel</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-4 "></div>
+                      <div class="row w-25 p-3">
+                        <button type="button" id="bt-entrenar" class="btn btn-primary bg-color-prim btn-sm">Entrenar</button>
+                      </div>
+                      <div class="col-3"></div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="col-md">
-              <div class="form-floating">
-                <select class="form-select" id="sl-kernel">
-                  <option value="rbf">RBF</option>
-                  <option value="kernel">Linear</option>
-                </select>
-                <label for="floatingSelectGrid">Kernel</label>
-              </div>
-            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-4 "></div>
-          <div class="row w-25 p-3">
-            <button type="button" id="bt-entrenar" class="btn btn-primary bg-color-prim btn-sm">Entrenar</button>
-          </div>
-          <div class="col-3"></div>
         </div>
       </div>
     </div>
+
+
+
+
     <br/>
     <br/>
 

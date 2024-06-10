@@ -195,14 +195,14 @@ class ModelSupportVectorMachine:
     list_measurment_convert.pop(0)
     return  list_measurment_convert  
 
-  def load_model():
+  def load_model(cls):
     modelo_cargado = load(model.RUTA+'/resources/evaluacion_docente_svm.joblib')
     return modelo_cargado
 
 
 
-  def load_vectorizador():
-    model_vec = load(model.RUTA+'/resources/resources/vectorizador.joblib')
+  def load_vectorizador(cls):
+    model_vec = load(model.RUTA+'/resources/vectorizador.joblib')
     return model_vec
 
 

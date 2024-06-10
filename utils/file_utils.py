@@ -6,7 +6,7 @@ from pages_visualization.models import Calification
 from pages_visualization.models import Comment
 from pages_visualization.models import Control
 from utils.text_utils import separate_paragraph
-from utils.model.supportVectorMachine import load_model, proc_text, proc_vectorizer
+from utils.model.supportVectorMachine import model
 
 def load_xls_evaluations():
     """Cargar evaluaciones desde archivo excel"""
@@ -87,9 +87,10 @@ def load_xls_evaluations():
 
 def load_xls_comments():
     """Cargar comentarios desde archivo excel"""
+    print("entro")
     comments=[]
-    df_sheet=pd.read_excel('/Users/corinviracacha/Documents/Proyectos/ProyectoEvaluacionDocente/evaluation_teacher/utils/resources/comentarios.xls', index_col=0, sheet_name=0)
-    model_svm=load_model()
+    df_sheet=pd.read_excel('/Users/corinviracacha/Documents/Proyectos/ProyectoEvaluacionDocente/evaluation_teacher/utils/resources/Comentarios2310.xls', index_col=0, sheet_name=0)
+    model_svm=model.load_model()
     course=""
     teacher=""
     num_class=""
@@ -108,10 +109,10 @@ def load_xls_comments():
         evaluation_search=Evaluation.objects.filter(id_course=id_course,id_teacher=id_teacher, ciclo= ciclo,
                                                         num_clase=num_clase).first()
         for comment in comments:
-                new_comment=proc_text(str(comment))
+                new_comment=model.proc_text(str(comment))
                 if(len(new_comment)==0):
                     continue
-                new_comment_tfidf = proc_vectorizer(new_comment)
+                new_comment_tfidf = model.proc_vectorizer(new_comment)
                 emotion = model_svm.predict(new_comment_tfidf)
     
                 comment=Comment.objects.create(comment=str(comment), comment_base=str(row['Descripción']), emotion=str(emotion),

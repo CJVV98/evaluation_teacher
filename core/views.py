@@ -6,7 +6,6 @@ from django.contrib.auth import authenticate  # type: ignore
 from utils.plots_utils import PlotsUtils
 from user_manage.models import User
 from django.shortcuts import redirect # type: ignore
-
 from django.contrib import messages  # type: ignore
 from django.utils.crypto import get_random_string  # type: ignore
 from user_manage.forms import UserData
@@ -19,7 +18,6 @@ def login(request):
             password=form.cleaned_data['password']
             user_valid = User.validate_user(user, password)          
             if user_valid is not None:
-                #load_file('/Users/corinviracacha/Documents/Proyectos/ProyectoEvaluacionDocente/evaluation_teacher/utils/resources/dataset_test.csv')
                 UserData.set_user_data(user_valid)
                 return redirect(reverse('core:main') + '?module_data=' + get_random_string(16))
         form = UserForm(request.POST)
